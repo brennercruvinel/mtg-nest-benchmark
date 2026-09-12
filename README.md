@@ -66,7 +66,7 @@ docs/                    methodology, hypotheses, references, roadmap, glossary,
 <details>
 <summary>artifacts</summary>
 
-the `.nest` files are on hugging face: [hoffresearch/mtg-nest-benchmark](https://huggingface.co/datasets/hoffresearch/mtg-nest-benchmark). `release/v0.3/<profile>/SHA256SUMS` pins the bytes, `CITATION_KEY` pins the identity read from inside the file with `nest inspect --json`.
+the `.nest` files are on hugging face: [brennercruvinel/mtg-nest-benchmark](https://huggingface.co/datasets/brennercruvinel/mtg-nest-benchmark). `release/v0.3/<profile>/SHA256SUMS` pins the bytes, `CITATION_KEY` pins the identity read from inside the file with `nest inspect --json`.
 
 </details>
 
