@@ -5,7 +5,7 @@ title: "mtg-nest-benchmark"
 version: 0.3.2
 date-released: 2026-09-12
 repository-code: "https://github.com/brennercruvinel/mtg-nest-benchmark"
-license: "to be decided by the maintainer"
+license: MIT
 authors:
   - family-names: Cruvinel
     given-names: Brenner

@@ -4,6 +4,7 @@ the format follows keep a changelog. versions are those of the `.nest` releases 
 
 ## [unreleased]
 
+- license: MIT for the repository, CC BY 4.0 for the `.nest` artifacts on hugging face; the dataset went public on 2026-09-12.
 experiment 15 (text-reading models over crf) landed: hypothesis refuted, no model loses txt@1 at crf50 on 512 cards and the text readers drift least. the 38k five-model build is queued.
 
 ## [0.3.2] - 2026-09-12

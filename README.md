@@ -86,4 +86,4 @@ the `.nest` files are on hugging face: [brennercruvinel/mtg-nest-benchmark](http
 
 ## license
 
-to be decided. the card images belong to wizards of the coast and are served by scryfall under their terms; this repo tracks none of them.
+code, specs and results: MIT (`LICENSE`). the `.nest` artifacts on hugging face: CC BY 4.0. the card images belong to wizards of the coast and are served by scryfall under their terms; this repo tracks none of them, and the compressed media inside each `.nest` is a derived encoding of that data, not a redistribution of the originals.
