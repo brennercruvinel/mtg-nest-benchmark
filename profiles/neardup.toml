@@ -1,9 +1,18 @@
-# mtgdataset v0.3 near-dup — corpus completo com o perfil medido para
-# reimpressões/quase-duplicatas: order=cluster + gop por segmento + tune
-# still (bench 2026-08-31: -29% em reimpressões, sem perder carta).
-# Single-file: mídia embutida via 0x17.
+# near-dup profile: reprints and near-duplicates, one self-contained .nest
 #
-#   nest build --spec dat/mtg/release/v03-still-neardup.toml
+# order=cluster + per-segment gop probe + tune still (profile near-dup).
+# -29% on a corpus of same-artwork reprints (benchmark/experiments/09-inter-ordering);
+# on unique cards the probe vetoes inter per segment and records why. this is the
+# recommended default and the v0.3 neardup release recipe.
+#
+# the forge needs nest with ${VAR} expansion in spec paths (pr pending in
+# hoffresearch/nest). export MTG_DATA to the spellbook data root (mtg.sqlite
+# and images/) and run the build from the repo root:
+#
+#   nest build --spec profiles/neardup.toml
+#
+# output lands in candidates/neardup/ (gitignored); promote it with
+# benchmark/tools/promote.py once it is validated.
 
 [corpus]
 name = "mtgdataset"
@@ -13,7 +22,7 @@ reproducible = true
 
 [source]
 kind = "sqlite"
-db = "~/Library/Application Support/Spellbook/data/mtg.sqlite"
+db = "${MTG_DATA}/mtg.sqlite"
 query = """
 SELECT oracle_id, name, mana_cost, type_line, oracle_text, rarity, set_code, image_uri
 FROM cards WHERE image_uri IS NOT NULL
@@ -36,14 +45,14 @@ template = """
 """
 
 [source.image]
-path_template = "~/Library/Application Support/Spellbook/data/images/normal/front/{img_id[0]}/{img_id[1]}/{img_id}.jpg"
+path_template = "${MTG_DATA}/images/normal/front/{img_id[0]}/{img_id[1]}/{img_id}.jpg"
 label_template = "{name}"
 
 [media]
-profile = "near-dup"        # order=cluster + gop=auto (probe POR SEGMENTO) + tune=still
+profile = "near-dup"        # order=cluster + gop=auto (probe per segment) + tune=still
 crf = 35
 speed = 6
-shard_size = 2048           # 19 segmentos: cada um decide intra/inter sozinho
+shard_size = 2048           # 19 segments on the full corpus: each decides intra/inter on its own
 dedup = true
 
 [media.cluster]
@@ -65,6 +74,6 @@ with_graph = true
 
 [output]
 mode = "single"
-dir = "dat/mtg/release/v03-neardup"
+dir = "candidates/neardup"
 provenance = "standard"
 embed_media = true

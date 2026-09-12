@@ -1,9 +1,17 @@
-# mtgdataset v0.3 archive — corpus completo SEM PERDA: jxl-transcode
-# (repack JPEG bit-reversível, roundtrip verificado por sha256 arquivo a
-# arquivo) com a mídia embutida via 0x17. Um único .nest com os bytes
-# originais recuperáveis de todas as 38.627 cartas.
+# archive profile: lossless, one self-contained .nest
 #
-#   nest build --spec dat/mtg/release/v03-still-archive.toml
+# jxl-transcode (bit-reversible jpeg repack, round-trip verified by sha256 file by
+# file) with media embedded via the 0x17 blob section. the original bytes of all
+# 38627 cards are recoverable from the single file. the v0.3 archive release recipe.
+#
+# the forge needs nest with ${VAR} expansion in spec paths (pr pending in
+# hoffresearch/nest). export MTG_DATA to the spellbook data root (mtg.sqlite
+# and images/) and run the build from the repo root:
+#
+#   nest build --spec profiles/archive.toml
+#
+# output lands in candidates/archive/ (gitignored); promote it with
+# benchmark/tools/promote.py once it is validated.
 
 [corpus]
 name = "mtgdataset"
@@ -13,7 +21,7 @@ reproducible = true
 
 [source]
 kind = "sqlite"
-db = "~/Library/Application Support/Spellbook/data/mtg.sqlite"
+db = "${MTG_DATA}/mtg.sqlite"
 query = """
 SELECT oracle_id, name, mana_cost, type_line, oracle_text, rarity, set_code, image_uri
 FROM cards WHERE image_uri IS NOT NULL
@@ -36,11 +44,11 @@ template = """
 """
 
 [source.image]
-path_template = "~/Library/Application Support/Spellbook/data/images/normal/front/{img_id[0]}/{img_id[1]}/{img_id}.jpg"
+path_template = "${MTG_DATA}/images/normal/front/{img_id[0]}/{img_id[1]}/{img_id}.jpg"
 label_template = "{name}"
 
 [media]
-profile = "archive"         # jxl-transcode: bytes originais reconstruíveis
+profile = "archive"         # jxl-transcode: original bytes recoverable
 dedup = true
 
 [[models]]
@@ -58,6 +66,6 @@ with_graph = true
 
 [output]
 mode = "single"
-dir = "dat/mtg/release/v03-archive"
+dir = "candidates/archive"
 provenance = "standard"
 embed_media = true
