@@ -1,0 +1,59 @@
+{
+ "experiment": "01-baselines",
+ "title": "archive-tool baselines over the 2048 source jpegs",
+ "provenance": {
+  "status": "measured",
+  "source": "benchmark/experiments/02-av1-variants/measurements.json, key _baselines (measure_variants.py)",
+  "date": "2026-08-31",
+  "notes": "tar and tar --zstd (ZSTD_CLEVEL=19) over the same 2048 jpeg files the variants encode"
+ },
+ "constants": {
+  "source_bytes": 211018809
+ },
+ "tables": [
+  {
+   "title": "baselines",
+   "columns": [
+    {
+     "key": "baseline",
+     "label": "baseline"
+    },
+    {
+     "key": "bytes",
+     "label": "bytes",
+     "fmt": "int"
+    },
+    {
+     "key": "mb",
+     "label": "MB",
+     "fmt": "mb",
+     "from": "bytes"
+    },
+    {
+     "key": "ratio",
+     "label": "ratio",
+     "fmt": "ratio",
+     "num": "source_bytes",
+     "den": "bytes"
+    }
+   ],
+   "rows": [
+    {
+     "baseline": "source (jpeg)",
+     "bytes": 211018809
+    },
+    {
+     "baseline": "tar",
+     "bytes": 216793600
+    },
+    {
+     "baseline": "tar + zstd-19",
+     "bytes": 210024429
+    }
+   ],
+   "notes": [
+    "2048 files. generic archivers do not compress jpeg; every gain below comes from an image or video codec."
+   ]
+  }
+ ]
+}
