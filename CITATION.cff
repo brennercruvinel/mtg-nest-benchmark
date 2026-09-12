@@ -1,0 +1,35 @@
+cff-version: 1.2.0
+message: "if you use this benchmark or its artifacts, cite it as below. the citation key of a specific .nest file is its content_hash, read with nest inspect --json."
+type: dataset
+title: "mtg-nest-benchmark"
+version: 0.3.0
+date-released: 2026-09-12
+repository-code: "https://github.com/hoffresearch/mtg-nest-benchmark"
+license: "to be decided by the maintainer"
+authors:
+  - family-names: Cruvinel
+    given-names: Brenner
+    affiliation: Hoff Research
+    email: brenner@hoffresearch.com
+abstract: "compression and retrieval benchmark of the 38,627-card magic: the gathering image corpus packed into single-file .nest containers with the nest engine: av1, avif and jpeg xl media variants, lossless batteries, inter-frame ordering over same-artwork reprints, an all-intra codec battery at matched ssimulacra2, and retrieval-only profiles measured on identity, embedding drift and text-to-image hit@k against a 3.975 GB jpeg source."
+keywords:
+  - image compression
+  - set redundancy
+  - album coding
+  - av1
+  - avif
+  - jpeg xl
+  - ssimulacra2
+  - image retrieval
+  - embeddings
+  - vector database
+  - single-file container
+  - magic the gathering
+  - scryfall
+identifiers:
+  - type: other
+    value: "sha256:c993ceda5b42749487ebd20df7f9dc10e321f3f6099dc73e8008f6524b98a582"
+    description: "content_hash of the v0.3 neardup and archive releases"
+  - type: other
+    value: "sha256:cb8fdf8f13fa50f93969de7603386f1c2b117a5e4946c60ac9894a3c5a1f062b"
+    description: "content_hash of the three experiment 13 candidates (av1 crf40, av1 crf50, avif q48)"
