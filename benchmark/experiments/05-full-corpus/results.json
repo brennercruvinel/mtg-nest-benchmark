@@ -5,7 +5,7 @@
   "status": "measured",
   "source": "release/v0.3/{neardup,archive}/mtgdataset.nest sizes and their build manifests (the historical rows from the 2026-09-03 builds, the rebuilt rows from the 2026-09-12 builds); the still row from the spellbook-v03 build sidecars kept outside this repo (that file was dropped from the release set); the legacy v0.2 row is transcribed, no artifact survives",
   "date": "2026-09-12",
-  "notes": "the historical rows were measured on builds that shared content_hash sha256:c993ceda5b42749487ebd20df7f9dc10e321f3f6099dc73e8008f6524b98a582 and chunker_version spellbook/1 inside the file while their sidecars said mtgdataset/1 (renamed after the build). on 2026-09-12 both releases were rebuilt from profiles/ under the mtgdataset name: the rebuilt files carry content_hash sha256:cb8fdf8f13fa50f93969de7603386f1c2b117a5e4946c60ac9894a3c5a1f062b and chunker_version mtgdataset/1 (read with nest inspect), the same identity as the three candidates of experiment 13, and their media blobs are byte-identical to the old ones; the old c993ceda twins were replaced and no longer exist. ratio_nest divides the source by the whole file, ratio_media by the embedded media blob; the 2026-09-03 report mixed the two bases (3.02x vs 2.93x for the same still file)."
+  "notes": "the historical rows were measured on builds that shared content_hash sha256:c993ceda5b42749487ebd20df7f9dc10e321f3f6099dc73e8008f6524b98a582 and chunker_version spellbook/1 inside the file while their sidecars said mtgdataset/1 (renamed after the build). on 2026-09-12 both releases were rebuilt from profiles/ under the mtgdataset name: the rebuilt files carry content_hash sha256:cb8fdf8f13fa50f93969de7603386f1c2b117a5e4946c60ac9894a3c5a1f062b and chunker_version mtgdataset/1 (read with nest inspect), the same identity as the three candidates of experiment 13, and their media blobs are byte-identical to the old ones; the old c993ceda twins were replaced and no longer exist. ratio_nest divides the source by the whole file, ratio_media by the embedded media blob; the 2026-09-03 report mixed the two bases (3.02x vs 2.93x for the same still file). the stills profile got its own release on 2026-09-12 (single av1 stream, no clustering): 14 kB less media than neardup, same content_hash; its clip space came from the shared embed cache, so the build was the media stage alone."
  },
  "constants": {
   "source_bytes": 3975063106
@@ -120,6 +120,15 @@
      "tune_resolved": null,
      "build_wall_s": null,
      "state": "release (rebuilt 2026-09-12)"
+    },
+    {
+     "build": "stills (rebuilt)",
+     "nest_bytes": 1374431484,
+     "media_bytes": 1335047579,
+     "recipe": "av1 crf35 speed6 tune still, gop intra, single stream, embed_media; clip vectors from the shared cache",
+     "tune_resolved": null,
+     "build_wall_s": 1267.8,
+     "state": "release (built 2026-09-12)"
     }
    ],
    "notes": [

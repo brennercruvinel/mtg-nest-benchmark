@@ -2,7 +2,7 @@ cff-version: 1.2.0
 message: "if you use this benchmark or its artifacts, cite it as below. the citation key of a specific .nest file is its content_hash, read with nest inspect --json."
 type: dataset
 title: "mtg-nest-benchmark"
-version: 0.3.1
+version: 0.3.2
 date-released: 2026-09-12
 repository-code: "https://github.com/hoffresearch/mtg-nest-benchmark"
 license: "to be decided by the maintainer"

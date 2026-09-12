@@ -4,7 +4,24 @@ the format follows keep a changelog. versions are those of the `.nest` releases 
 
 ## [unreleased]
 
-nothing yet. the open items are in `docs/roadmap.md`.
+experiment 15 (text-reading models over crf) is running; the 38k five-model build is queued.
+
+## [0.3.2] - 2026-09-12
+
+### added
+
+- `release/v0.3/stills/` and `release/v0.3/retrieval/`: every profile now has a release. stills is a single av1 crf35 stream (1,374,431,484 bytes, file_hash 6f12cadb..., media 1,335,047,579, 14 kB under neardup since there is no clustering); retrieval is the crf50 candidate promoted as is (532,671,548 bytes, file_hash 73f814b7...). both carry content_hash cb8fdf8f.
+- candidates `v03-retrieval-crf55` (370,108,284 bytes) and `v03-retrieval-crf60` (229,972,284 bytes), on the hub under `candidates/`.
+- experiment 14, text-to-image utility at n=1000 on seven full-corpus files: crf50 and avif q48 sit within one standard error of lossless, crf55 is 1.5 se under, crf60 is 1.9 se under with identity@1 at 0.971. the edge of the clip ruler is between crf50 and crf55.
+- `profiles/stills-5models.toml`: the stills recipe with potion, clip, siglip2, jina-v5-omni-nano and wemm-2b, for the 38k five-model build.
+
+### upstream
+
+- nest pull request #135: a hit@1 utility floor for the crf=auto gate (`utility_floor_hit1`, `utility_queries`, `utility_query_template`, `utility_tol`) and the `retrieval-auto` profile. on a 256-card smoke test the utility leg passes every rung to crf60 while the drift and visual floors would veto from crf45 on.
+
+### removed
+
+- the zenodo descriptor and every doi mention.
 
 ## [0.3.1] - 2026-09-12
 

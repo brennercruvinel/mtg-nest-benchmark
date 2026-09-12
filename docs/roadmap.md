@@ -4,7 +4,7 @@ the open items after v0.3, each with what is missing and why it matters. the ord
 
 ## a hit@k floor for the retrieval-only gate
 
-the `crf=auto` gate has a drift floor (cosine p10 0.98) and two visual floors. experiment 13 showed that drift measures signal stability and not search utility: crf50 has drift 0.942 and the same txt@1 as crf35. a retrieval-only profile therefore needs a utility floor, hit@k on a fixed query set, either inside the gate or in the sweep that picks the crf. crf55 and crf60 were never measured on utility, only on drift, and n=100 does not prove equality. this needs the bench output saved as an artifact, n well above 100, and a stronger ruler than clip on "artwork of the card {name}".
+done on 2026-09-12. nest pull request #135 adds a hit@1 utility floor to the crf=auto gate and a `retrieval-auto` profile that walks the ladder on utility alone; experiment 14 measured the seven full-corpus files at n=1000 and put the edge of the clip ruler between crf50 and crf55. what remains is the ruler itself: clip tops out near 0.09 hit@1 on this corpus, and experiment 15 measures the models that read the printed name.
 
 issue: https://github.com/hoffresearch/mtg-nest-benchmark/issues/1
 
