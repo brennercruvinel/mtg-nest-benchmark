@@ -37,6 +37,13 @@ MEASURED_DATE = "2026-08-31"  # date the media was last measured for real
 EXP_VARIANTS = env.EXPERIMENTS / "02-av1-variants"
 EXP_BASELINES = env.EXPERIMENTS / "01-baselines"
 MEASUREMENTS = EXP_VARIANTS / "measurements.json"
+# report order: ruler first, then lossless, then the av1 knob isolation, then image codecs and single-file builds
+ORDER = [
+    "control", "jxl-transcode", "jxl-lossless", "av1-v02-crf35-s8", "av1-still-s6-crf35",
+    "av1-fps30-intra-crf35", "av1-inter-crf35", "av1-fps30-inter-crf35", "av1-cluster-crf35",
+    "av1-auto-dualgate", "avif-crf35", "selfcontained-still-s6", "selfcontained-neardup",
+    "selfcontained-jxl-transcode", "selfcontained-avif",
+]
 
 
 class MediaPruned(FileNotFoundError):
@@ -213,9 +220,9 @@ def results_from_measurements(m: dict) -> tuple[dict, dict]:
         ],
     }
     rows = []
-    for name, r in m.items():
-        if name.startswith("_"):
-            continue
+    names = [n for n in ORDER if n in m] + sorted(n for n in m if n not in ORDER and not n.startswith("_"))
+    for name in names:
+        r = m[name]
         s2, dr = r["ssimulacra2"], r["clip_drift"]
         rows.append(
             {

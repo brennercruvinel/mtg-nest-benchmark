@@ -1,0 +1,278 @@
+{
+ "experiment": "13-retrieval-crf",
+ "title": "retrieval-only candidates: crf goes up, search does not fall",
+ "provenance": {
+  "status": "measured",
+  "source": "candidates/{v03-retrieval,v03-retrieval-crf50,v03-avif-q48}/mtgdataset.nest sizes and manifests (media.output_bytes, media.crf_auto); the txt@k / drift table is transcribed from sections 13 and 14 of the 2026-09-03 report, no nest_model_bench output was saved",
+  "date": "2026-09-12",
+  "notes": "sizes measured 2026-09-12 on the 2026-09-03 builds. the three candidates share content_hash sha256:cb8fdf8f13fa50f93969de7603386f1c2b117a5e4946c60ac9894a3c5a1f062b (chunker mtgdataset/1); the release twins carry c993ceda (spellbook/1). the avif manifest recorded source_bytes 21450566470 and compression_ratio 18.61 because the avif backend summed its letterboxed png inputs instead of the jpeg sources (nest forge bug); the true source is 3975063106 bytes, giving 3.45x on media and 3.32x on the .nest. the 2026-09-03 report labelled MiB as GB for these three files (0.935, 0.508, 1.101); the exact bytes here replace them."
+ },
+ "constants": {
+  "source_bytes": 3975063106
+ },
+ "tables": [
+  {
+   "title": "candidate sizes",
+   "columns": [
+    {
+     "key": "candidate",
+     "label": "candidate"
+    },
+    {
+     "key": "nest_bytes",
+     "label": "nest bytes",
+     "fmt": "int"
+    },
+    {
+     "key": "nest_gb",
+     "label": "nest GB",
+     "fmt": "gb",
+     "from": "nest_bytes"
+    },
+    {
+     "key": "ratio_nest",
+     "label": "ratio_nest",
+     "fmt": "ratio",
+     "num": "source_bytes",
+     "den": "nest_bytes"
+    },
+    {
+     "key": "media_bytes",
+     "label": "media bytes",
+     "fmt": "int"
+    },
+    {
+     "key": "ratio_media",
+     "label": "ratio_media",
+     "fmt": "ratio",
+     "num": "source_bytes",
+     "den": "media_bytes"
+    },
+    {
+     "key": "recipe",
+     "label": "recipe"
+    },
+    {
+     "key": "manifest_source_bytes",
+     "label": "manifest source_bytes",
+     "fmt": "int"
+    }
+   ],
+   "rows": [
+    {
+     "candidate": "retrieval av1 crf40 (gate fallback)",
+     "nest_bytes": 980715452,
+     "media_bytes": 941331425,
+     "recipe": "av1 crf auto over [40..60], visual floors dropped, drift floor 0.98; no step passed, fell back to 40; tune still, speed 6, intra, single segment",
+     "manifest_source_bytes": 3975063106
+    },
+    {
+     "candidate": "retrieval av1 crf50 (fixed)",
+     "nest_bytes": 532671548,
+     "media_bytes": 493287539,
+     "recipe": "av1 crf50 fixed, no gate; tune still, speed 6, intra, single segment",
+     "manifest_source_bytes": 3975063106
+    },
+    {
+     "candidate": "avif q48",
+     "nest_bytes": 1195973116,
+     "media_bytes": 1152881029,
+     "recipe": "avifenc quality 48 speed 8 yuv420, one .avif per card (38627 blobs)",
+     "manifest_source_bytes": 21450566470
+    }
+   ],
+   "notes": [
+    "against the neardup release (1374447420 bytes) the avif candidate is -13.0% on the .nest and -13.6% media vs media; the i-frame battery predicted -12.4% at matched quality, so the prediction held, it did not come out larger as the old report claimed.",
+    "crf50 vs the still build (1356369020 bytes): -60.7% on the .nest; crf40 vs still: -27.7%."
+   ]
+  },
+  {
+   "title": "crf auto ladder on the crf40 candidate (48-item stratified sample, 4 buckets x 12)",
+   "columns": [
+    {
+     "key": "crf",
+     "label": "crf",
+     "fmt": "int"
+    },
+    {
+     "key": "drift_p10",
+     "label": "clip drift p10",
+     "fmt": "f5"
+    },
+    {
+     "key": "ssim_min",
+     "label": "ssim2 min",
+     "fmt": "f2"
+    },
+    {
+     "key": "bucket_medium_high_text",
+     "label": "ssim2 p10 medium/high/text",
+     "fmt": "f2"
+    },
+    {
+     "key": "bucket_medium_low_plain",
+     "label": "ssim2 p10 medium/low/plain",
+     "fmt": "f2"
+    },
+    {
+     "key": "bucket_medium_mid_plain",
+     "label": "ssim2 p10 medium/mid/plain",
+     "fmt": "f2"
+    },
+    {
+     "key": "bucket_medium_mid_text",
+     "label": "ssim2 p10 medium/mid/text",
+     "fmt": "f2"
+    },
+    {
+     "key": "pass",
+     "label": "pass"
+    }
+   ],
+   "rows": [
+    {
+     "crf": 40,
+     "drift_p10": 0.93199,
+     "ssim_min": 33.25,
+     "pass": false,
+     "bucket_medium_high_text": 56.1,
+     "bucket_medium_low_plain": 40.39,
+     "bucket_medium_mid_plain": 41.01,
+     "bucket_medium_mid_text": 42.54
+    },
+    {
+     "crf": 45,
+     "drift_p10": 0.92216,
+     "ssim_min": 18.21,
+     "pass": false,
+     "bucket_medium_high_text": 44.64,
+     "bucket_medium_low_plain": 26.83,
+     "bucket_medium_mid_plain": 27.96,
+     "bucket_medium_mid_text": 30.77
+    },
+    {
+     "crf": 50,
+     "drift_p10": 0.89589,
+     "ssim_min": -0.16,
+     "pass": false,
+     "bucket_medium_high_text": 33.97,
+     "bucket_medium_low_plain": 8.97,
+     "bucket_medium_mid_plain": 11.63,
+     "bucket_medium_mid_text": 16.12
+    },
+    {
+     "crf": 55,
+     "drift_p10": 0.87687,
+     "ssim_min": -25.14,
+     "pass": false,
+     "bucket_medium_high_text": 17.12,
+     "bucket_medium_low_plain": -12.15,
+     "bucket_medium_mid_plain": -11.97,
+     "bucket_medium_mid_text": -4.57
+    },
+    {
+     "crf": 60,
+     "drift_p10": 0.82851,
+     "ssim_min": -49.49,
+     "pass": false,
+     "bucket_medium_high_text": -8.36,
+     "bucket_medium_low_plain": -34.87,
+     "bucket_medium_mid_plain": -38.56,
+     "bucket_medium_mid_text": -29.37
+    }
+   ],
+   "notes": [
+    "gate warning recorded in the manifest: no ladder crf met the floors (visual p10>=-1000000000.0, min>=-1000000000.0, drift p10>=0.98); using smallest crf 40",
+    "the drift floor 0.98 is never met above crf35 on this corpus; the gate measures signal stability, not search utility (next table)."
+   ]
+  },
+  {
+   "title": "utility on the five full-corpus files (100 queries, seed 7, 'artwork of the card {name}', clip space)",
+   "columns": [
+    {
+     "key": "corpus",
+     "label": "corpus"
+    },
+    {
+     "key": "nest_bytes",
+     "label": "nest bytes",
+     "fmt": "int"
+    },
+    {
+     "key": "ratio_nest",
+     "label": "ratio_nest",
+     "fmt": "ratio",
+     "num": "source_bytes",
+     "den": "nest_bytes"
+    },
+    {
+     "key": "identity_at_1",
+     "label": "identity@1",
+     "fmt": "f3"
+    },
+    {
+     "key": "drift_p10",
+     "label": "drift p10",
+     "fmt": "f4"
+    },
+    {
+     "key": "txt_at_1",
+     "label": "txt@1",
+     "fmt": "f3"
+    },
+    {
+     "key": "txt_at_5",
+     "label": "txt@5",
+     "fmt": "f3"
+    }
+   ],
+   "rows": [
+    {
+     "corpus": "archive (lossless)",
+     "nest_bytes": 3606304124,
+     "identity_at_1": 1.0,
+     "drift_p10": 0.9974,
+     "txt_at_1": 0.05,
+     "txt_at_5": 0.13
+    },
+    {
+     "corpus": "neardup (crf35 class)",
+     "nest_bytes": 1374447420,
+     "identity_at_1": 1.0,
+     "drift_p10": 0.9706,
+     "txt_at_1": 0.07,
+     "txt_at_5": 0.14
+    },
+    {
+     "corpus": "avif q48",
+     "nest_bytes": 1195973116,
+     "identity_at_1": 1.0,
+     "drift_p10": 0.9719,
+     "txt_at_1": 0.09,
+     "txt_at_5": 0.12
+    },
+    {
+     "corpus": "retrieval av1 crf40",
+     "nest_bytes": 980715452,
+     "identity_at_1": 1.0,
+     "drift_p10": 0.9618,
+     "txt_at_1": 0.08,
+     "txt_at_5": 0.12
+    },
+    {
+     "corpus": "retrieval av1 crf50",
+     "nest_bytes": 532671548,
+     "identity_at_1": 1.0,
+     "drift_p10": 0.942,
+     "txt_at_1": 0.08,
+     "txt_at_5": 0.15
+    }
+   ],
+   "notes": [
+    "transcribed: with n=100 the txt@k differences are noise; 'no detectable utility loss' is not a proof of equality. drift p10 0.942 at crf50 would have been vetoed by any reasonable drift floor, so a retrieval-only gate needs a hit@k floor, not a cosine one.",
+    "visual quality at crf50 is genuinely bad (ssim2 p10 per bucket 9 to 34 in the ladder above); this file serves search, never display.",
+    "the bench matches hits by chunk_id (identity N3), not by ordinal, after the ordinal match zeroed neardup and archive."
+   ]
+  }
+ ]
+}

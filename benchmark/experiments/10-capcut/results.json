@@ -1,0 +1,62 @@
+{
+ "experiment": "10-capcut",
+ "title": "the capcut experiment reproduced: speed-up plus 30 fps export",
+ "provenance": {
+  "status": "transcribed",
+  "source": "section 10 of the 2026-09-03 report; the exported mp4 was not kept and the exact ffmpeg recipe (60x setpts, 30 fps export, h.264 defaults) is recorded only in prose",
+  "date": "2026-08-31",
+  "notes": "the input is the still-s6 shard of 02-av1-variants (70092669 bytes, exact, still embedded in benchmark/runs/selfcontained-still-s6/mtgdataset.nest); the output size is the report's 30.2 MB times 1e6."
+ },
+ "tables": [
+  {
+   "title": "before and after",
+   "columns": [
+    {
+     "key": "stream",
+     "label": "stream"
+    },
+    {
+     "key": "bytes",
+     "label": "bytes",
+     "fmt": "int"
+    },
+    {
+     "key": "mb",
+     "label": "MB",
+     "fmt": "mb",
+     "from": "bytes"
+    },
+    {
+     "key": "frames",
+     "label": "frames (cards)",
+     "fmt": "int"
+    },
+    {
+     "key": "vs_original",
+     "label": "bytes vs original",
+     "fmt": "pct_change",
+     "num": "bytes",
+     "den": "base_bytes"
+    }
+   ],
+   "rows": [
+    {
+     "stream": "still-s6 shard (av1 crf35 speed6 tune still, 1 fps)",
+     "bytes": 70092669,
+     "frames": 2048,
+     "base_bytes": 70092669
+    },
+    {
+     "stream": "after 60x speed-up, 30 fps h.264 export",
+     "bytes": 30200000,
+     "frames": 1055,
+     "base_bytes": 70092669
+    }
+   ],
+   "notes": [
+    "the halving is real but comes from two losses: the 30 fps export samples the accelerated timeline and drops 993 of 2048 cards (48%), and the rest is re-encoded h.264 over already compressed material. not a compression path.",
+    "the experiment exposed a real bug: decode_frame assumed fps=1 on random frame access; fixed in the nest forge (fps flows from the manifest to the seek)."
+   ]
+  }
+ ]
+}

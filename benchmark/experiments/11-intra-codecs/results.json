@@ -1,0 +1,336 @@
+{
+ "experiment": "11-intra-codecs",
+ "title": "all-intra codec battery at matched quality (ssim2 mean 61.96 +-2)",
+ "provenance": {
+  "status": "measured",
+  "source": "benchmark/experiments/11-intra-codecs/battery.json (19 experiments + _meta) and one encoded sample per experiment under samples/; the battery script itself was not kept",
+  "date": "2026-08-31",
+  "notes": "all encoders consume the same decoded pixels (PIL decode + letterbox to 488x680, the forge baseline pipeline); quality = SSIMULACRA2 on the fixed 96-item sample of measure_variants.py (numpy default_rng(7).choice(2048, 96)), decoded frame vs source PNG; calibration target = ssim2 mean 61.96 +-2 (svt-av1 preset 6 crf 35 tune=still, the av1-still-s6-crf35 baseline of measurements.json, reproduced byte-identically here: 70092669 bytes, p50 62.69) machine: macOS arm64 Apple Silicon, 10 logical cores; ffmpeg 9 (libsvtav1 4.2.0, x265, x264), avifenc 1.4.2 (aom 3.14.1), cjxl 0.12.0, cwebp 1.6.0, vvencapp 1.14.0. threads: wall clock, threads as recorded per entry: video codecs encode one stream (svt ladder pinned to lp=2 like the forge baseline; lp=8 bonus rows unlock threads), per-image codecs run 10 parallel single-threaded workers"
+ },
+ "constants": {
+  "source_bytes": 211018809
+ },
+ "tables": [
+  {
+   "title": "encoders",
+   "columns": [
+    {
+     "key": "experiment",
+     "label": "experiment"
+    },
+    {
+     "key": "codec",
+     "label": "codec"
+    },
+    {
+     "key": "params",
+     "label": "params"
+    },
+    {
+     "key": "bytes",
+     "label": "bytes",
+     "fmt": "int"
+    },
+    {
+     "key": "mb",
+     "label": "MB",
+     "fmt": "mb",
+     "from": "bytes"
+    },
+    {
+     "key": "ratio",
+     "label": "ratio",
+     "fmt": "ratio",
+     "num": "source_bytes",
+     "den": "bytes"
+    },
+    {
+     "key": "encode_s",
+     "label": "encode s",
+     "fmt": "f1"
+    },
+    {
+     "key": "threads",
+     "label": "threads"
+    },
+    {
+     "key": "ssim2_mean",
+     "label": "ssim2 mean",
+     "fmt": "f2"
+    },
+    {
+     "key": "ssim2_p50",
+     "label": "p50",
+     "fmt": "f2"
+    },
+    {
+     "key": "ssim2_p10",
+     "label": "p10",
+     "fmt": "f2"
+    },
+    {
+     "key": "ssim2_min",
+     "label": "min",
+     "fmt": "f2"
+    }
+   ],
+   "rows": [
+    {
+     "experiment": "avif-s6-q48",
+     "codec": "avifenc (aom)",
+     "params": "-q 48 --speed 6 --yuv 420 -j 1",
+     "bytes": 61434107,
+     "encode_s": 50.8,
+     "threads": "10 workers x 1 thread",
+     "ssim2_mean": 60.72,
+     "ssim2_p50": 61.79,
+     "ssim2_p10": 53.22,
+     "ssim2_min": 40.85,
+     "notes": "one file per image"
+    },
+    {
+     "experiment": "svt-p4-crf35",
+     "codec": "svt-av1 all-intra",
+     "params": "crf=35 preset=4 tune=4(MS_SSIM(forge 'still')) lp=2 keyint=1 yuv420p",
+     "bytes": 68974514,
+     "encode_s": 167.3,
+     "threads": "lp=2",
+     "ssim2_mean": 62.54,
+     "ssim2_p50": 63.3,
+     "ssim2_p10": 56.12,
+     "ssim2_min": 47.48,
+     "notes": "single mp4 stream, ffmpeg 9 libsvtav1 4.2, same pipeline as forge av1 backend"
+    },
+    {
+     "experiment": "svt-p6-crf35",
+     "codec": "svt-av1 all-intra",
+     "params": "crf=35 preset=6 tune=4(MS_SSIM(forge 'still')) lp=2 keyint=1 yuv420p",
+     "bytes": 70092669,
+     "encode_s": 74.1,
+     "threads": "lp=2",
+     "ssim2_mean": 61.96,
+     "ssim2_p50": 62.69,
+     "ssim2_p10": 55.68,
+     "ssim2_min": 45.3,
+     "notes": "single mp4 stream, ffmpeg 9 libsvtav1 4.2, same pipeline as forge av1 backend"
+    },
+    {
+     "experiment": "svt-p6-crf35-lp8",
+     "codec": "svt-av1 all-intra",
+     "params": "crf=35 preset=6 tune=4 lp=8 keyint=1 yuv420p",
+     "bytes": 70092669,
+     "encode_s": 17.0,
+     "threads": "lp=8",
+     "ssim2_mean": 61.96,
+     "ssim2_p50": 62.69,
+     "ssim2_p10": 55.68,
+     "ssim2_min": 45.3,
+     "notes": "threads unlocked for the speed axis; same quality settings as ladder"
+    },
+    {
+     "experiment": "svt-p6-crf35-tune3",
+     "codec": "svt-av1 all-intra",
+     "params": "crf=35 preset=6 tune=3(still/IQ) lp=2 keyint=1 yuv420p",
+     "bytes": 71048645,
+     "encode_s": 71.6,
+     "threads": "lp=2",
+     "ssim2_mean": 63.22,
+     "ssim2_p50": 64.05,
+     "ssim2_p10": 56.9,
+     "ssim2_min": 46.31,
+     "notes": "single mp4 stream, ffmpeg 9 libsvtav1 4.2, same pipeline as forge av1 backend"
+    },
+    {
+     "experiment": "svt-p8-crf35",
+     "codec": "svt-av1 all-intra",
+     "params": "crf=35 preset=8 tune=4(MS_SSIM(forge 'still')) lp=2 keyint=1 yuv420p",
+     "bytes": 72477033,
+     "encode_s": 12.6,
+     "threads": "lp=2",
+     "ssim2_mean": 60.12,
+     "ssim2_p50": 60.9,
+     "ssim2_p10": 53.54,
+     "ssim2_min": 42.02,
+     "notes": "single mp4 stream, ffmpeg 9 libsvtav1 4.2, same pipeline as forge av1 backend"
+    },
+    {
+     "experiment": "jxl-d4.0-e7",
+     "codec": "cjxl lossy (VarDCT)",
+     "params": "-d 4.0 -e 7 --lossless_jpeg=0",
+     "bytes": 72971941,
+     "encode_s": 71.1,
+     "threads": "10 workers x 1 thread",
+     "ssim2_mean": 60.91,
+     "ssim2_p50": 61.25,
+     "ssim2_p10": 52.88,
+     "ssim2_min": 41.76,
+     "notes": "distance calibrated to ssim2 target"
+    },
+    {
+     "experiment": "svt-p10-crf35",
+     "codec": "svt-av1 all-intra",
+     "params": "crf=35 preset=10 tune=4(MS_SSIM(forge 'still')) lp=2 keyint=1 yuv420p",
+     "bytes": 74693370,
+     "encode_s": 7.0,
+     "threads": "lp=2",
+     "ssim2_mean": 59.03,
+     "ssim2_p50": 59.94,
+     "ssim2_p10": 52.7,
+     "ssim2_min": 41.69,
+     "notes": "single mp4 stream, ffmpeg 9 libsvtav1 4.2, same pipeline as forge av1 backend"
+    },
+    {
+     "experiment": "svt-p12-crf35",
+     "codec": "svt-av1 all-intra",
+     "params": "crf=35 preset=12 tune=4(MS_SSIM(forge 'still')) lp=2 keyint=1 yuv420p",
+     "bytes": 74693370,
+     "encode_s": 7.6,
+     "threads": "lp=2",
+     "ssim2_mean": 59.03,
+     "ssim2_p50": 59.94,
+     "ssim2_p10": 52.7,
+     "ssim2_min": 41.69,
+     "notes": "single mp4 stream, ffmpeg 9 libsvtav1 4.2, same pipeline as forge av1 backend"
+    },
+    {
+     "experiment": "svt-p10-crf35-lp8",
+     "codec": "svt-av1 all-intra",
+     "params": "crf=35 preset=10 tune=4 lp=8 keyint=1 yuv420p",
+     "bytes": 74693370,
+     "encode_s": 3.3,
+     "threads": "lp=8",
+     "ssim2_mean": 59.03,
+     "ssim2_p50": 59.94,
+     "ssim2_p10": 52.7,
+     "ssim2_min": 41.69,
+     "notes": "threads unlocked for the speed axis; same quality settings as ladder"
+    },
+    {
+     "experiment": "x264-crf31",
+     "codec": "libx264 all-intra",
+     "params": "crf=31 preset=medium keyint=1 yuv420p",
+     "bytes": 75983495,
+     "encode_s": 4.8,
+     "threads": "default (10 logical)",
+     "ssim2_mean": 60.77,
+     "ssim2_p50": 61.05,
+     "ssim2_p10": 55.63,
+     "ssim2_min": 48.44,
+     "notes": "single mp4 stream; crf calibrated to ssim2 target"
+    },
+    {
+     "experiment": "vvenc-fast-qp22",
+     "codec": "vvenc (VVC intra)",
+     "params": "qp=22 preset=fast ip=1 idr 10bit-internal yuv420",
+     "bytes": 76171974,
+     "encode_s": 463.4,
+     "threads": "8",
+     "ssim2_mean": 62.71,
+     "ssim2_p50": 63.12,
+     "ssim2_p10": 55.95,
+     "ssim2_min": 47.04,
+     "notes": "raw .266 bitstream; vvencapp 1.14; decoded with ffmpeg native vvc; qp calibrated"
+    },
+    {
+     "experiment": "avif-s9-q52",
+     "codec": "avifenc (aom)",
+     "params": "-q 52 --speed 9 --yuv 420 -j 1",
+     "bytes": 79686391,
+     "encode_s": 7.2,
+     "threads": "10 workers x 1 thread",
+     "ssim2_mean": 62.54,
+     "ssim2_p50": 63.68,
+     "ssim2_p10": 55.79,
+     "ssim2_min": 44.71,
+     "notes": "one file per image"
+    },
+    {
+     "experiment": "x265-crf32",
+     "codec": "libx265 all-intra",
+     "params": "crf=32 preset=medium keyint=1 yuv420p",
+     "bytes": 80944399,
+     "encode_s": 61.9,
+     "threads": "default (10 logical)",
+     "ssim2_mean": 61.21,
+     "ssim2_p50": 61.55,
+     "ssim2_p10": 56.35,
+     "ssim2_min": 50.6,
+     "notes": "single mp4 stream; crf calibrated to ssim2 target"
+    },
+    {
+     "experiment": "webp-q45",
+     "codec": "cwebp",
+     "params": "-q 45 (yuv420)",
+     "bytes": 85100594,
+     "encode_s": 9.5,
+     "threads": "10 workers x 1 thread",
+     "ssim2_mean": 62.2,
+     "ssim2_p50": 62.29,
+     "ssim2_p10": 57.02,
+     "ssim2_min": 50.37,
+     "notes": "one file per image"
+    },
+    {
+     "experiment": "jxl-d2.0-e7",
+     "codec": "cjxl lossy (VarDCT)",
+     "params": "-d 2.0 -e 7 --lossless_jpeg=0",
+     "bytes": 123574499,
+     "encode_s": 62.0,
+     "threads": "10 workers x 1 thread",
+     "ssim2_mean": 75.92,
+     "ssim2_p50": 76.36,
+     "ssim2_p10": 70.75,
+     "ssim2_min": 63.1,
+     "notes": "fixed distance per task spec; quality ABOVE baseline, not size-comparable"
+    },
+    {
+     "experiment": "jxl-d2.0-e4",
+     "codec": "cjxl lossy (VarDCT)",
+     "params": "-d 2.0 -e 4 --lossless_jpeg=0",
+     "bytes": 142128739,
+     "encode_s": 10.2,
+     "threads": "10 workers x 1 thread",
+     "ssim2_mean": 81.2,
+     "ssim2_p50": 81.64,
+     "ssim2_p10": 78.54,
+     "ssim2_min": 74.29,
+     "notes": "fixed distance per task spec; quality ABOVE baseline, not size-comparable"
+    },
+    {
+     "experiment": "jxl-d1.0-e7",
+     "codec": "cjxl lossy (VarDCT)",
+     "params": "-d 1.0 -e 7 --lossless_jpeg=0",
+     "bytes": 183982930,
+     "encode_s": 63.4,
+     "threads": "10 workers x 1 thread",
+     "ssim2_mean": 86.61,
+     "ssim2_p50": 86.92,
+     "ssim2_p10": 84.28,
+     "ssim2_min": 81.38,
+     "notes": "fixed distance per task spec; quality ABOVE baseline, not size-comparable"
+    },
+    {
+     "experiment": "jxl-d1.0-e4",
+     "codec": "cjxl lossy (VarDCT)",
+     "params": "-d 1.0 -e 4 --lossless_jpeg=0",
+     "bytes": 194899196,
+     "encode_s": 11.6,
+     "threads": "10 workers x 1 thread",
+     "ssim2_mean": 89.62,
+     "ssim2_p50": 89.83,
+     "ssim2_p10": 88.65,
+     "ssim2_min": 85.92,
+     "notes": "fixed distance per task spec; quality ABOVE baseline, not size-comparable"
+    }
+   ],
+   "notes": [
+    "verdicts: most compact at equivalent quality = avif-s6-q48 (61434107 bytes, -12.4% vs the svt-p6 baseline; libaom still out-compresses svt-av1 all-intra); fastest inside the +-2 window = x264-crf31 (4.8 s wall); svt-p10-lp8 is faster (3.3 s) but sits 2.9 points below target.",
+    "svt presets 10 and 12 emit byte-identical streams: svt-av1 4.2 maps both to M9 for all-intra.",
+    "svt tune=3 is the real still-picture tune (Tune IQ, all-intra only): +1.26 ssim2 for +1.4% bytes. the forge probe resolved tune=still to 4 (MS_SSIM) because it probed without keyint=1; fixed, manifests record tune_resolved.",
+    "vvenc uses 10-bit internal coding, decoded with ffmpeg 9's native vvc decoder; 100x the cost of x264 for a mid-table size.",
+    "jpeg-xl operates in XYB (no 4:2:0 chroma subsampling); the cjxl d1/d2 rows are fixed-distance and sit far above the target quality, so their sizes are not comparable to the calibrated rows.",
+    "the svt-p6-crf35 row reproduces the av1-still-s6-crf35 variant of 02-av1-variants byte for byte (70092669 bytes)."
+   ]
+  }
+ ]
+}
