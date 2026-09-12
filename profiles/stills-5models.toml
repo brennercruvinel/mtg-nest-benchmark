@@ -1,0 +1,85 @@
+# stills profile with the five model spaces (potion text, clip, siglip2, jina-v5-omni-nano, wemm-2b).
+# same media recipe as profiles/stills.toml; the 38k build with every model was never run before
+# 2026-09-12 (wemm-2b embeds at about 0.6 img/s on mps, jina at 0.3: expect days, resumable
+# through the shared cache). run from the repo root: nest build --spec profiles/stills-5models.toml --resume
+[corpus]
+name = "mtgdataset"
+title = "MTG card dataset (self-contained)"
+chunker_version = "mtgdataset/1"
+reproducible = true
+
+[source]
+kind = "sqlite"
+db = "${MTG_DATA}/mtg.sqlite"
+query = """
+SELECT oracle_id, name, mana_cost, type_line, oracle_text, rarity, set_code, image_uri
+FROM cards WHERE image_uri IS NOT NULL
+"""
+order_by = ["img_id", "oracle_id"]
+
+[source.derive]
+img_id = "basename_stem(image_uri)"
+
+[[source.joins]]
+query = "SELECT oracle_id, printed_name AS pt_name FROM names_localized WHERE lang='pt' AND lang_rank=1"
+on = "oracle_id"
+
+[source.text]
+template = """
+{name} ({pt_name})
+{mana_cost}; {type_line}
+[{rarity}, {set_code}]
+{oracle_text}
+"""
+
+[source.image]
+path_template = "${MTG_DATA}/images/normal/front/{img_id[0]}/{img_id[1]}/{img_id}.jpg"
+label_template = "{name}"
+
+[media]
+backend = "av1"
+crf = 35
+tune = "still"
+speed = 6
+gop = "intra"
+order = "none"
+shard_size = 40960          # > n_items: a single video segment
+dedup = true
+
+[[models]]
+preset = "potion"
+text = "default"             # space 0: ask/retrieve/bm25/graph, offline and instant
+
+[[models]]
+preset = "clip-vit-b32"
+image = "space"
+
+[[models]]
+preset = "siglip2"
+image = "space"
+
+[[models]]
+preset = "jina-v5-omni-nano"
+image = "space"
+text = "space"
+dims = [256]
+batch_size = 16
+
+[[models]]
+preset = "wemm-2b"
+image = "space"
+text = "space"
+dims = [256]
+batch_size = 8
+
+[build]
+preset = "hybrid"
+dtype = "int8"
+with_graph = true
+
+[output]
+mode = "single"
+dir = "candidates/stills-5models"
+provenance = "standard"
+embed_media = true
+allow_remote_code = ["jina-v5-omni-nano", "wemm-2b"]   # rfc-0 n11: these presets execute model-repo code
