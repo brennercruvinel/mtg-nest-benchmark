@@ -4,7 +4,28 @@ the format follows keep a changelog. versions are those of the `.nest` releases 
 
 ## [unreleased]
 
-nothing yet. the open items are in `docs/roadmap.md`; the next entry is expected to carry the mtgdataset rebuild of the two releases and the avif source_bytes fix.
+nothing yet. the open items are in `docs/roadmap.md`.
+
+## [0.3.1] - 2026-09-12
+
+the two v0.3 releases rebuilt under the mtgdataset name, the same day as 0.3.0. no measurement changed: text, vectors and media bytes are the same as in 0.3.0, what changed is the identity inside the file and the sidecars that describe it.
+
+### changed
+
+- `release/v0.3/archive/mtgdataset.nest` rebuilt from `profiles/archive.toml` with the nest forge at main (after pull requests #131 and #133): 3,606,342,844 bytes (the old file was 3,606,304,124, +38,720), file_hash `sha256:882427094aa6035aa1ddf6abd26444f1598345fb9be3a66612f50b99be377eeb`, content_hash `sha256:cb8fdf8f13fa50f93969de7603386f1c2b117a5e4946c60ac9894a3c5a1f062b`, chunker_version mtgdataset/1. the jxl-transcode media blob is 3,563,328,079 bytes, identical to the old build; media stage 6 min, clip embed 872.7 s.
+- `release/v0.3/neardup/mtgdataset.nest` rebuilt from `profiles/neardup.toml`: 1,374,447,548 bytes (the old file was 1,374,447,420, +128), file_hash `sha256:071233c549f45644a3ce9a3bc581e0fe564ed30f70a01b30f726efb3b5c50132`, content_hash cb8fdf8f, chunker_version mtgdataset/1. the av1 media blob is 1,335,061,967 bytes over 19 shards and byte-identical to the old build, the encode is deterministic; rows 27.7 s, media 1649.1 s, clip embed 281.1 s.
+- the +38,720 and +128 bytes are the longer title, the chunker string and the `media://mtgdataset-*` uris in place of `media://spellbook-*`. nothing else moved, and the content_hash cb8fdf8f now shared by the two releases and the three candidates of experiment 13 is the proof. the old c993ceda twins were replaced and no longer exist on disk.
+- both files validated with `nest validate`, promoted with `promote.py --force` (new build lock, stripped manifest, `SHA256SUMS`, `CITATION_KEY`) and uploaded to the hugging face dataset under `release/v0.3/archive/` and `release/v0.3/neardup/`. the five full-corpus files are now on the hub.
+- experiment 05 carries two extra rows, state "release (rebuilt 2026-09-12)", with the new bytes; the historical rows stay because they are what the 2026-09-03 numbers were measured on.
+- `profiles/*.toml` and the readme say which forge the specs need: `${VAR}` expansion in spec paths since nest #131, the embed cache under `${XDG_CACHE_HOME:-~/.cache}/nest` since #133, a checkout at or after commit 7dc3cc78.
+
+### fixed
+
+- the avif candidate manifest, which recorded source_bytes 21,450,566,470 and ratio 18.61 (the letterboxed png intermediates), patched by hand after nest #132 landed: source_bytes 3,975,063,106, ratio 3.45, the png sum kept as `letterboxed_input_bytes`, a `patched` note in the media block. on disk and on hugging face.
+
+### upstream
+
+- nest pull requests #131 (`${VAR}` in spec paths and the retrieval media profile), #132 (avif source_bytes), #133 (content-addressed embed cache under xdg) and #134 (this benchmark recorded in the nest changelog) merged on 2026-09-12.
 
 ## [0.3.0] - 2026-09-12
 
@@ -52,5 +73,5 @@ avif manifest error:
 
 ### known
 
-- the two release files carry `chunker_version spellbook/1` inside while the sidecars say mtgdataset/1 (renamed after the build); content_hash c993ceda for the releases, cb8fdf8f for the candidates. see the roadmap.
+- the two release files carried `chunker_version spellbook/1` inside while the sidecars said mtgdataset/1 (renamed after the build); content_hash c993ceda for the releases, cb8fdf8f for the candidates. closed by the rebuild in 0.3.1.
 - experiments 03, 09 and 10 and the utility table of 13 are transcribed: their artifacts were not kept.

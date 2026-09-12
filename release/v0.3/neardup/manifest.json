@@ -1,5 +1,5 @@
 {
- "corpus_input_hash": "sha256:ba715edd5c3fdf5f1a44ca94bbe8eba3787e1407d3b31bd5012049746dbc6914",
+ "corpus_input_hash": "sha256:5639a3b761d9a82388d4e2e47572ba3d25038997b3cdd4522ad82b5c01b59a74",
  "items": {
   "fields": [
    "image_path",
@@ -39128,7 +39128,7 @@
  "models": {
   "clip-vit-b32": {
    "embedding_recipe_hash": "sha256:5deac1a6a7d45054639b72a18d21d076033ec812a5d847b2bb507f57a79e93ea",
-   "items_per_s": 124.23,
+   "items_per_s": 137.43,
    "model_hash": "sha256:76269ff6bb18be70a910506ccd31d52216b05a4bede0772ac17c0100ee75ca8f",
    "recipe": {
     "adapter_version": 1,
@@ -39158,21 +39158,10 @@
    }
   },
   "potion": {
-   "embedding_recipe_hash": "sha256:47c5368097a488d4ab0b3968e1adcfa9224ecdeeda897484f3c41acb477aa073",
-   "items_per_s": 13563.22,
+   "embedding_recipe_hash": "sha256:b081e0ecc2c051f89e20eea9efe6071f094a5b943b71a364db2a8206ac042dbb",
    "model_hash": "sha256:8f2eb91a754b4da59cdd8223d0ba196185fed1bb6f092fd2be0ff02b893b1c98",
    "recipe": {
     "adapter_version": 1,
-    "decoder": {
-     "backend": "av1",
-     "canvas": [
-      488,
-      680
-     ],
-     "crf": 35,
-     "pix_fmt": "yuv420p",
-     "provenance_sha256": "sha256:d1e65101209300f6b73bca918563d1e405b559a749b89353b058abc5ee1421de"
-    },
     "device_class": "auto",
     "encode_kwargs": {},
     "image_doc_format": "dict",
@@ -39194,10 +39183,10 @@
  "name": "mtgdataset",
  "outputs": {
   "mtgdataset.nest": {
-   "build_s": 102.149,
-   "bytes": 1374447420,
-   "file": "benchmark/full-38627/neardup/mtgdataset.nest",
-   "file_hash": "sha256:ee96af4cd332e55f87dce4f8146ccd83125d6597e53b3cdc9077ca47ba53237c"
+   "build_s": 73.861,
+   "bytes": 1374447548,
+   "file": "candidates/neardup/mtgdataset.nest",
+   "file_hash": "sha256:071233c549f45644a3ce9a3bc581e0fe564ed30f70a01b30f726efb3b5c50132"
   }
  },
  "provenance_mode": "standard",
@@ -39213,9 +39202,9 @@
  "sql": "",
  "text_quality": "template",
  "timings": {
-  "embed.clip-vit-b32": 310.938,
-  "embed.potion": 2.848,
-  "media": 1417.714,
-  "rows": 9.717
+  "embed.clip-vit-b32": 281.063,
+  "embed.potion": 0.0,
+  "media": 1649.144,
+  "rows": 27.655
  }
 }

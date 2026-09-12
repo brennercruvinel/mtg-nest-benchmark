@@ -8,4 +8,4 @@ verdict: confirmed on ratios and overhead, with two surprises recorded in the ma
 
 the single-file overhead is 39.4 MB of indexes, text and vectors over the 1.317 GB media blob of the still build, +3.0%. the still build was dropped from the release set once neardup superseded it, and the legacy v0.2 row (58 MB .nest, 38 loose mp4 sidecars, 1.7 GB) survives only as a transcription.
 
-provenance: measured for neardup and archive (`release/v0.3/`), the still row from sidecars kept outside this repository, the v0.2 row transcribed. the two release files say `spellbook/1` inside and `mtgdataset/1` in their sidecars, which were renamed after the build; see the roadmap.
+provenance: measured for neardup and archive (`release/v0.3/`), the still row from sidecars kept outside this repository, the v0.2 row transcribed. the release files measured on 2026-09-03 said `spellbook/1` inside and `mtgdataset/1` in their sidecars, which were renamed after the build; both were rebuilt on 2026-09-12 under the mtgdataset name (content_hash cb8fdf8f, media bytes identical) and the table carries the rebuilt rows beside the historical ones.

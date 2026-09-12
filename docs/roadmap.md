@@ -28,7 +28,7 @@ issue: https://github.com/hoffresearch/mtg-nest-benchmark/issues/4
 
 ## rebuild the v0.3 releases under the mtgdataset name
 
-the two release files carry `chunker_version = spellbook/1`, the title "Spellbook MTG corpus" and `media://spellbook-*` uris inside, while the sidecars beside them say mtgdataset/1 because they were renamed after the build. this is why the releases have content_hash c993ceda and the candidates cb8fdf8f, and it means the release build lock no longer reproduces the file it describes. the fix is a rebuild from `profiles/neardup.toml` and `profiles/archive.toml` (about 30 and 20 minutes), which will produce the cb8fdf8f identity; the alternative is to document the twins as they are and freeze them.
+done on 2026-09-12. the two release files carried `chunker_version = spellbook/1`, the title "Spellbook MTG corpus" and `media://spellbook-*` uris inside, while the sidecars beside them said mtgdataset/1 because they were renamed after the build; that is why the releases had content_hash c993ceda against cb8fdf8f for the candidates, and why the release build lock did not reproduce the file it described. both were rebuilt from `profiles/archive.toml` and `profiles/neardup.toml` with the forge at main: archive 3,606,342,844 bytes, file_hash `sha256:882427094aa6035aa1ddf6abd26444f1598345fb9be3a66612f50b99be377eeb`; neardup 1,374,447,548 bytes, file_hash `sha256:071233c549f45644a3ce9a3bc581e0fe564ed30f70a01b30f726efb3b5c50132`; both content_hash `sha256:cb8fdf8f13fa50f93969de7603386f1c2b117a5e4946c60ac9894a3c5a1f062b` and chunker mtgdataset/1, media bytes identical to the old builds. the c993ceda twins were replaced on disk and on hugging face.
 
 issue: https://github.com/hoffresearch/mtg-nest-benchmark/issues/5
 

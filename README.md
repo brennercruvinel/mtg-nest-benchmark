@@ -61,11 +61,11 @@ no image bytes are tracked. each file in `benchmark/corpora/` is a list of forge
 
 ## artifacts
 
-the five full-corpus `.nest` files and the sample runs are hosted on the hugging face dataset `hoffresearch/mtg-nest-benchmark`, private for now. `release/v0.3/<profile>/SHA256SUMS` pins the bytes and `CITATION_KEY` pins the identity read from inside the file with `nest inspect --json`.
+the five full-corpus `.nest` files are on the hugging face dataset `hoffresearch/mtg-nest-benchmark`, private for now: the two v0.3 releases under `release/v0.3/<profile>/` (rebuilt on 2026-09-12 under the mtgdataset name) and the three candidates of experiment 13 under `candidates/<name>/`, plus the sample runs. `release/v0.3/<profile>/SHA256SUMS` pins the bytes and `CITATION_KEY` pins the identity read from inside the file with `nest inspect --json`.
 
 ## citing
 
-`CITATION.cff` has the metadata. the citation key of a specific file is its content_hash: the two v0.3 releases share `sha256:c993ceda5b42...` (they are twins, same text and vectors, different media), the three candidates of experiment 13 share `sha256:cb8fdf8f13fa...` (the rename of the chunker changed it, as identity n3 says it should). a zenodo doi comes when the repository goes public, since zenodo's github integration needs a public repository.
+`CITATION.cff` has the metadata. the citation key of a specific file is its content_hash: since the rebuild of 2026-09-12 the two v0.3 releases and the three candidates of experiment 13 all share `sha256:cb8fdf8f13fa...`, same text and vectors, five media encodings, and the file_hash in `SHA256SUMS` is what tells them apart. the old releases carried `sha256:c993ceda5b42...` under the spellbook/1 chunker name; those files were replaced. a zenodo doi comes when the repository goes public, since zenodo's github integration needs a public repository.
 
 ## license
 
@@ -73,4 +73,4 @@ license: to be decided by the maintainer. the card images belong to wizards of t
 
 ## status
 
-v0.3, 2026-09-12. two profiles released (neardup, archive), three candidates measured and not promoted (av1 crf40, av1 crf50, avif q48), the roadmap in `docs/roadmap.md`.
+v0.3.1, 2026-09-12. two profiles released (neardup, archive, rebuilt the same day under the mtgdataset name, content_hash cb8fdf8f), three candidates measured and not promoted (av1 crf40, av1 crf50, avif q48), all five on hugging face, the roadmap in `docs/roadmap.md`.
