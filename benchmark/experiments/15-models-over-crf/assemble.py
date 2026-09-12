@@ -15,11 +15,13 @@ which render_report.py prints as '-'.
 from __future__ import annotations
 
 import json
+import math
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[2]
 RUNS = REPO / "benchmark" / "runs"
+N_QUERIES = 200
 
 VARIANTS = [("lossless", "lossless (jxl-transcode)"), ("crf35", "av1 crf35"), ("crf50", "av1 crf50")]
 MODELS = [
@@ -55,7 +57,9 @@ def main() -> int:
                 "txt_at_5": sp["t3_text_to_image_hit"]["@5"] if sp else None,
                 "txt_at_10": sp["t3_text_to_image_hit"]["@10"] if sp else None,
                 "embed_items_per_s": mm.get("items_per_s"),
-                "embed_s": (m or {}).get("timings", {}).get(f"embed.{preset}"),
+                # a 0.0 embed timing is a cache hit (the vectors came from the shared embed
+                # cache, no model ran in that build), so the rate is unknown, not zero
+                "embed_s": (m or {}).get("timings", {}).get(f"embed.{preset}") or None,
             }
             rows.append(row)
             per_variant[v] = row
@@ -65,6 +69,14 @@ def main() -> int:
             a, b = per_variant[v].get(key), ref.get(key)
             return None if a is None or b is None else round(a - b, 4)
 
+        def z(v: str, key: str, n: int = N_QUERIES):
+            # pooled binomial se of the difference of two hit rates at n queries each
+            a, b = per_variant[v].get(key), ref.get(key)
+            if a is None or b is None:
+                return None
+            se = math.sqrt(a * (1 - a) / n + b * (1 - b) / n)
+            return None if se == 0 else round((a - b) / se, 2)
+
         deltas.append(
             {
                 "model": label,
@@ -73,6 +85,7 @@ def main() -> int:
                 "d_txt1_crf35": d("crf35", "txt_at_1"),
                 "txt1_crf50": per_variant["crf50"].get("txt_at_1"),
                 "d_txt1_crf50": d("crf50", "txt_at_1"),
+                "z_txt1_crf50": z("crf50", "txt_at_1"),
                 "d_txt5_crf50": d("crf50", "txt_at_5"),
                 "d_txt10_crf50": d("crf50", "txt_at_10"),
                 "d_drift_crf50": d("crf50", "drift_p10"),
@@ -118,7 +131,7 @@ def main() -> int:
                 "rows": rows,
                 "notes": [
                     "media bytes is the inlined media blob of each build (jxl-transcode for lossless, one all-intra av1 segment for crf35 and crf50); every row of a media level shares it. ratio_media divides the jpeg source bytes of the 512 sampled cards (constants.source_bytes, from the manifest) by it.",
-                    "embed it/s and embed s are build side: items per second over the 512 decoded frames as the manifest recorded them (timings.embed.<preset>), so they include model load and the first-batch warmup on mps.",
+                    "embed it/s and embed s are build side: items per second over the 512 decoded frames as the manifest recorded them (timings.embed.<preset>), so they include model load and the first-batch warmup on mps. a '-' is a cache hit: the lossless build ran twice (the first attempt died at wemm-2b before its weights had finished downloading) and the retry took clip, siglip2 and jina from the shared embed cache, so only wemm-2b has a measured rate on that row.",
                     "identity@1 (T1) is inflated by construction and only says the pipeline keeps its own signal; txt@k (T3) is the label ruler, a weak ground truth; T1, T2 and T3 are never aggregated.",
                 ],
             },
@@ -131,6 +144,7 @@ def main() -> int:
                     {"key": "d_txt1_crf35", "label": "delta crf35", "fmt": "f3"},
                     {"key": "txt1_crf50", "label": "txt@1 crf50", "fmt": "f3"},
                     {"key": "d_txt1_crf50", "label": "delta crf50", "fmt": "f3"},
+                    {"key": "z_txt1_crf50", "label": "z crf50", "fmt": "f2"},
                     {"key": "d_txt5_crf50", "label": "delta txt@5 crf50", "fmt": "f3"},
                     {"key": "d_txt10_crf50", "label": "delta txt@10 crf50", "fmt": "f3"},
                     {"key": "d_drift_crf50", "label": "delta drift p10 crf50", "fmt": "f4"},
@@ -138,6 +152,7 @@ def main() -> int:
                 "rows": deltas,
                 "notes": [
                     "delta = lossy minus lossless on the same 200 queries; negative is a loss. 0.005 per query, so a delta inside about 0.03 is noise at n=200.",
+                    "z = delta / sqrt(p_lossy(1-p_lossy)/200 + p_lossless(1-p_lossless)/200), the pooled binomial se of the difference; |z| below 2 is inside noise.",
                 ],
             },
         ],

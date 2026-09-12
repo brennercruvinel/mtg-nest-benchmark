@@ -4,7 +4,7 @@ the format follows keep a changelog. versions are those of the `.nest` releases 
 
 ## [unreleased]
 
-experiment 15 (text-reading models over crf) is running; the 38k five-model build is queued.
+experiment 15 (text-reading models over crf) landed: hypothesis refuted, no model loses txt@1 at crf50 on 512 cards and the text readers drift least. the 38k five-model build is queued.
 
 ## [0.3.2] - 2026-09-12
 

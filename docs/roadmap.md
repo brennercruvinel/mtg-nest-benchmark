@@ -10,7 +10,7 @@ issue: https://github.com/hoffresearch/mtg-nest-benchmark/issues/1
 
 ## wemm and jina over crf50 media
 
-the utility table of experiment 13 is clip only. the models that read the printed card name (wemm-2b@256, jina-v5-omni-nano@256) had drift 0.990 and 0.989 at crf35 on the 1500 sample, but text rendering degrades faster than art under heavy quantization (the gate's text buckets at crf50 sit at ssim2 p10 16 to 34), so their utility at crf50 is an open question and the answer decides whether the retrieval profile is usable with a text-reading model.
+done on 2026-09-12, experiment 15: three builds of the same 512-card sample (lossless, crf35, crf50) with clip, siglip2, jina-v5-omni-nano and wemm-2b, 200 text queries each. no model loses txt@1 at crf50 beyond noise (siglip2 0.93, wemm-2b 0.91 on a file 7.3x smaller than lossless), and the text readers are the ones that drift least in cosine. the crf50 retrieval recipe is safe for them on this sample; a sharper test needs the full corpus or a name-collision slice.
 
 issue: https://github.com/hoffresearch/mtg-nest-benchmark/issues/2
 
