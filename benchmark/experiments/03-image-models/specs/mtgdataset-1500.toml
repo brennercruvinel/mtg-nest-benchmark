@@ -1,8 +1,11 @@
-# mtgdataset: 38k magic cards from a local sqlite + scryfall images.
-# the working example for `nest build --spec`; five models, media with the
-# dual quality gate, dedup, and every capability in one file.
+# 03-image-models: the five-model verification spec (potion text default plus
+# clip, siglip2, jina-v5-omni-nano@256 and wemm-2b@256 image spaces), media with
+# the dual quality gate, dedup, every capability in one file. run on the
+# evenly spaced 1500-card sample (benchmark/corpora/sample-1500.json):
 #
-#   nest build --spec dat/mtg/specs/mtgdataset.toml --sample 1500
+#   nest build --spec benchmark/experiments/03-image-models/specs/mtgdataset-1500.toml --sample 1500
+#
+# wemm-2b needs its weights on disk; set model_path to your local copy.
 
 [corpus]
 name = "mtgdataset"
@@ -12,7 +15,7 @@ reproducible = true
 
 [source]
 kind = "sqlite"
-db = "~/Library/Application Support/Spellbook/data/mtg.sqlite"
+db = "${MTG_DATA}/mtg.sqlite"
 query = """
 SELECT oracle_id, name, mana_cost, type_line, oracle_text, rarity, set_code, image_uri
 FROM cards WHERE image_uri IS NOT NULL
@@ -35,7 +38,7 @@ template = """
 """
 
 [source.image]
-path_template = "~/Library/Application Support/Spellbook/data/images/normal/front/{img_id[0]}/{img_id[1]}/{img_id}.jpg"
+path_template = "${MTG_DATA}/images/normal/front/{img_id[0]}/{img_id[1]}/{img_id}.jpg"
 label_template = "{name}"
 
 [media]
@@ -57,7 +60,7 @@ buckets = ["resolution", "entropy", "has_text"]
 
 [[models]]
 preset = "potion"
-text = "default"             # espaço 0: ask/retrieve/bm25/graph, offline e instantâneo
+text = "default"             # space 0: ask/retrieve/bm25/graph, offline and instant
 
 [[models]]
 preset = "clip-vit-b32"
@@ -89,6 +92,6 @@ with_graph = true
 
 [output]
 mode = "single"
-dir = "out/mtgdataset"
+dir = "candidates/mtgdataset-1500"
 provenance = "standard"
 allow_remote_code = ["jina-v5-omni-nano", "wemm-2b"]

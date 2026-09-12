@@ -1,11 +1,12 @@
-# mtgdataset v0.3 candidate — retrieval-only at FIXED crf50.
-# RESULTS.md §13 measured no utility loss at crf40 (txt@1 parity with the
-# lossless archive) while drift p10 sits at 0.932; crf50 costs drift 0.896
-# and its txt@1 was never measured. This build answers that question with a
-# fixed crf — no gate — so the bench isolates the codec step alone.
-# NOT for serving display-quality images.
+# 13-retrieval-crf, crf50 candidate: retrieval-only at a fixed crf50.
+# the crf40 candidate measured no utility loss (txt@1 parity with the lossless
+# archive) while drift p10 sat at 0.932; crf50 costs drift 0.896 and its txt@1
+# had never been measured. this build answers that with a fixed crf, no gate, so
+# the bench isolates the codec step alone. built 2026-09-03 as
+# candidates/v03-retrieval-crf50; the same recipe is profiles/retrieval.toml.
+# not for serving display-quality images.
 #
-#   nest build --spec dat/mtg/specs/retrieval50.toml
+#   nest build --spec benchmark/experiments/13-retrieval-crf/specs/retrieval-crf50.toml
 
 [corpus]
 name = "mtgdataset"
@@ -15,7 +16,7 @@ reproducible = true
 
 [source]
 kind = "sqlite"
-db = "~/Library/Application Support/Spellbook/data/mtg.sqlite"
+db = "${MTG_DATA}/mtg.sqlite"
 query = """
 SELECT oracle_id, name, mana_cost, type_line, oracle_text, rarity, set_code, image_uri
 FROM cards WHERE image_uri IS NOT NULL
@@ -38,7 +39,7 @@ template = """
 """
 
 [source.image]
-path_template = "~/Library/Application Support/Spellbook/data/images/normal/front/{img_id[0]}/{img_id[1]}/{img_id}.jpg"
+path_template = "${MTG_DATA}/images/normal/front/{img_id[0]}/{img_id[1]}/{img_id}.jpg"
 label_template = "{name}"
 
 [media]
@@ -48,9 +49,8 @@ tune = "still"
 speed = 6
 gop = "intra"
 order = "none"
-shard_size = 40960          # > n_items: um único segmento de vídeo
+shard_size = 40960          # > n_items: a single video segment
 dedup = true
-
 
 [[models]]
 preset = "potion"
@@ -67,6 +67,6 @@ with_graph = true
 
 [output]
 mode = "single"
-dir = "dat/mtg/benchmark/candidates/v03-retrieval-crf50"
+dir = "candidates/v03-retrieval-crf50"
 provenance = "standard"
 embed_media = true

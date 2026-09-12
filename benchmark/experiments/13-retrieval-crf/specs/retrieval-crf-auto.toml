@@ -1,11 +1,12 @@
-# mtgdataset v0.3 candidate — retrieval-only profile.
-# The dual gate's visual floors are deliberately DROPPED (-1e9): the only
-# floor is embedding drift (clip p10 >= 0.98). Hypothesis from the v03 bench:
-# retrieval survives far more compression than the eye (drift 0.97-0.99 at
-# crf35), so the ladder is opened to [40..60] and the gate picks the largest
-# crf the retrieval signal tolerates. NOT for serving display-quality images.
+# 13-retrieval-crf, crf auto candidate: retrieval-only profile with the ladder.
+# the dual gate's visual floors are deliberately dropped (-1e9): the only floor
+# is embedding drift (clip p10 >= 0.98). hypothesis from the v03 bench: retrieval
+# survives far more compression than the eye (drift 0.97-0.99 at crf35), so the
+# ladder is opened to [40..60] and the gate picks the largest crf the retrieval
+# signal tolerates. it picked none and fell back to crf40 (candidates/v03-retrieval,
+# built 2026-09-03). not for serving display-quality images.
 #
-#   nest build --spec dat/mtg/specs/retrieval.toml
+#   nest build --spec benchmark/experiments/13-retrieval-crf/specs/retrieval-crf-auto.toml
 
 [corpus]
 name = "mtgdataset"
@@ -15,7 +16,7 @@ reproducible = true
 
 [source]
 kind = "sqlite"
-db = "~/Library/Application Support/Spellbook/data/mtg.sqlite"
+db = "${MTG_DATA}/mtg.sqlite"
 query = """
 SELECT oracle_id, name, mana_cost, type_line, oracle_text, rarity, set_code, image_uri
 FROM cards WHERE image_uri IS NOT NULL
@@ -38,7 +39,7 @@ template = """
 """
 
 [source.image]
-path_template = "~/Library/Application Support/Spellbook/data/images/normal/front/{img_id[0]}/{img_id[1]}/{img_id}.jpg"
+path_template = "${MTG_DATA}/images/normal/front/{img_id[0]}/{img_id[1]}/{img_id}.jpg"
 label_template = "{name}"
 
 [media]
@@ -48,7 +49,7 @@ tune = "still"
 speed = 6
 gop = "intra"
 order = "none"
-shard_size = 40960          # > n_items: um único segmento de vídeo
+shard_size = 40960          # > n_items: a single video segment
 dedup = true
 
 [media.quality]
@@ -75,6 +76,6 @@ with_graph = true
 
 [output]
 mode = "single"
-dir = "dat/mtg/benchmark/candidates/v03-retrieval"
+dir = "candidates/v03-retrieval"
 provenance = "standard"
 embed_media = true
