@@ -1,0 +1,33 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: install ruff
+        run: pip install ruff
+
+      - name: lint the bench tools
+        run: ruff check benchmark/tools
+
+      - name: rendered report is up to date
+        run: python benchmark/tools/render_report.py --check
+
+      - name: no tracked file names a machine
+        run: |
+          hits=$(git ls-files | xargs grep -l -e '/Users''/' -e '/home''/' -e 'Library/Application'' Support' || true)
+          if [ -n "$hits" ]; then
+            echo "machine-local paths in tracked files:"
+            echo "$hits"
+            exit 1
+          fi
