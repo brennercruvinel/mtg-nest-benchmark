@@ -65,7 +65,7 @@ the five full-corpus `.nest` files are on the hugging face dataset `hoffresearch
 
 ## citing
 
-`CITATION.cff` has the metadata. the citation key of a specific file is its content_hash: since the rebuild of 2026-09-12 the two v0.3 releases and the three candidates of experiment 13 all share `sha256:cb8fdf8f13fa...`, same text and vectors, five media encodings, and the file_hash in `SHA256SUMS` is what tells them apart. the old releases carried `sha256:c993ceda5b42...` under the spellbook/1 chunker name; those files were replaced. a zenodo doi comes when the repository goes public, since zenodo's github integration needs a public repository.
+`CITATION.cff` has the metadata. the citation key of a specific file is its content_hash: since the rebuild of 2026-09-12 the two v0.3 releases and the three candidates of experiment 13 all share `sha256:cb8fdf8f13fa...`, same text and vectors, five media encodings, and the file_hash in `SHA256SUMS` is what tells them apart. the old releases carried `sha256:c993ceda5b42...` under the spellbook/1 chunker name; those files were replaced.
 
 ## license
 

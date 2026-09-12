@@ -40,7 +40,6 @@ the first version of the benchmark as a repository. the measurements are those o
 - `release/v0.3/{neardup,archive}/` with the build lock, the stripped manifest, `SHA256SUMS` and `CITATION_KEY`; `promote.py` produces them from a candidate.
 - `sanitize_sidecars.py`, which rewrites the data root and the nest checkout in every sidecar to `${MTG_DATA}` and `${NEST_REPO}` so no tracked file names a machine.
 - `docs/`: methodology, hypotheses, references, roadmap, glossary, this changelog, and the 2026-09-03 report archived verbatim with a supersession note.
-- `CITATION.cff` and `.zenodo.json`. the doi is issued when the repository goes public, since zenodo's github integration needs a public repository.
 
 ### changed
 
