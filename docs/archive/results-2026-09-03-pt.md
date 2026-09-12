@@ -1,3 +1,23 @@
+<!-- archived: superseded, kept verbatim as the historical record -->
+
+> **superseded.** this is the hand-written report of 2026-09-03 (in portuguese), kept verbatim
+> as the record of how the numbers were first read. the maintained results are generated into
+> `RESULTS.md` from `benchmark/experiments/*/results.json`; where the two disagree, the json wins.
+> the only edit below is the section 6 heading: the machine-local data path was replaced by
+> `${MTG_DATA}` so no tracked file names a machine.
+>
+> unit and provenance errors found in the 2026-09-11 audit and corrected in the generated report:
+>
+> - sec 8: "jxl-transcode -e 7 | 1.124x" is 1.115x (211018809 / 189231744); 1.124x belongs to -e 9. the prose "-11.1%" is e9 (-11.0%), e7 is -10.3%. "perde por 3.3-3.8x" is against the source jpeg; against jxl e9 the lossless video rows lose 3.7x to 4.3x.
+> - sec 13: "retrieval-only (crf40) | 0.935 GB" is MiB labelled GB; the file is 980715452 bytes = 0.981 GB. "4.22x" is the media-only ratio (3975063106 / 941331425); on the .nest it is 4.05x, while the other rows of the same table use .nest bytes. "-31% vs o still" is -27.7% with correct bytes; "-74% vs a fonte (4.22x)" is inconsistent with itself (4.22x means -76.3%; correct .nest ratio gives -75.3%; -74% is against the archive, not the source).
+> - sec 14: "crf50 | 0.508 GB | 7.82x" and "crf50: 508 MB" are MiB; the file is 532671548 bytes = 0.533 GB, 7.46x on the .nest (8.06x media only). "avif q48 | 1.101 GB | 3.61x": the .nest is 1195973116 bytes = 1.196 GB (3.32x; 3.45x media only); 1.101 is most likely the media blob in MiB. "-20% de bytes (1.101 vs 1.374 GB)" is -13.0% on .nest bytes (-13.6% media vs media), so the claim that the i-frame prediction (-12.4%) "materialized larger" does not hold; it came out about equal.
+> - sec 6: "6.9 GB" and "3.0 GB" are GiB from du (allocated blocks); the sum of file sizes is 7201468217 bytes for images/ and 3107627150 for art_crop/. "~2.800 imagens orfas por classe" is wrong: those are the back faces, referenced by cards.image_uri_back (2824 rows); the true front orphans are 3 (38630 stems vs 38627 cards). the jsonl.gz files no longer exist.
+> - sec 9: "difere pouco no g unico (1.8pt)" is 1.8 MB (96.8 - 95.0); in percentage points vs intra it is 1.5 pp. the matrix compares bytes at fixed crf and is not quality matched.
+> - sec 5 vs sec 12: the same still file is quoted at 3.02x (media bytes) and 2.93x (nest bytes); the generated report always shows both ratios. sec 12 names the file mtgdataset.nest but it was built as spellbook.nest (chunker_version spellbook/1 inside).
+> - sec 2 and header: "seed 42" is a provenance error; the 2048-card sample is evenly spaced (rows[int(i * 38627 / 2048)] over rows sorted by (img_id, oracle_id)) and seed independent. the table omits three measured variants (selfcontained-neardup, selfcontained-jxl-transcode, selfcontained-avif) that the generated report carries.
+> - measurements.json and the avif candidate manifest: avif source_bytes (1138810355 on the sample, 21450566470 on the full corpus, ratio 18.61) are the letterboxed png intermediates, an avif backend bug in the nest forge; the ratios in the tables always use the jpeg source.
+> - sec 8 also points at `benchmark/sample-2048/lossless/jxl-e9/`, which was deleted after measurement; only the results record survived (now `benchmark/experiments/08-lossless/battery.json`).
+
 # MTG dataset compression benchmark
 
 Data: 2026-08-31. Pipeline: `nest build --spec`, um TOML por variante em `benchmark/sample-2048/specs/`, saidas em `benchmark/sample-2048/runs/<variante>/`. Amostra: 2048 cartas, seed 42, deterministica e identica em todas as variantes.
@@ -82,7 +102,7 @@ Receita recomendada (`mtgdataset-v03.toml`). Build: 18 min (encode 723 s, clip 2
 
 Overhead do single-file: 39 MB de indices/texto/vetores sobre 1.317 GB de midia (+3.0%). O diretorio `mtgdataset-v03/mtgdataset.media/` (1.2 GB) e cache de build para `--rebuild-only`/`--resume`; deletavel.
 
-## 6. Dados brutos (~/Library/Application Support/Spellbook)
+## 6. Dados brutos (${MTG_DATA})
 
 - 82.905 jpgs, 6.9 GB. Duplicatas exatas por md5: 38 (0.05%) — dedup por bytes nao e o problema.
 - `images/art_crop/` (3.0 GB) e recorte derivavel de `images/normal/`; armazenar coordenadas de crop em vez da classe economiza 3 GB. Nada foi deletado.
