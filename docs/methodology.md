@@ -14,6 +14,16 @@ t3 utility. hit@k of a text query against the image space, ruler `artwork of the
 
 the reason for keeping them apart is experiment 13. drift p10 goes from 0.9706 at crf35 to 0.9420 at crf50, a fall any reasonable drift floor rejects, while txt@1 stays flat at 0.07 to 0.09. a single aggregated score would have hidden that.
 
+## what the literature calls this
+
+three names cover what the experiments do, and each one is a pointer to prior work rather than a claim of novelty.
+
+image-set compression, or set-redundancy compression, is karadimitriou's 1996 term for exploiting the redundancy across a collection instead of inside each image. experiment 09 (inter prediction with gop 16 over reprints ordered by clip similarity) is the photo-album coding of the 2010 to 2016 line, an mst or cluster ordering followed by a video codec, done with av1. the caveats are in the experiment: bytes at fixed crf, not quality matched, and part of the gain is the shared card frame. wu, sun, yang, zeng and wu (ieee tip 2016) report more than 31 percent lossless savings on jpeg collections with pseudo-video in the dct domain, which is well past the 1.12x ceiling of experiment 08; that ceiling is the one reachable with available tools, and the paper is what a general claim would have to beat.
+
+rate-quality-utility benchmarking is what experiment 13 does when it keeps fidelity (ssimulacra2), signal stability (embedding cosine drift) and task utility (hit@k) apart. the standards world calls the field image and video coding for machines (icm and vcm) or task-aware compression; that drift does not predict utility is a recurring observation there, so this repository reports it as a confirmation on this corpus, not as a finding of its own.
+
+a retrieval-ready archive is the artifact: codec-compressed media, int8 vectors of two spaces, an hnsw index, bm25, a graph and the source spans in one mmap-able, content-addressed file. the closest relative is lance, which has blob semantics, vectors and full-text search but is a directory of fragments. one file against a directory is the product thesis, and the measured cost of that property is the 3.0 percent single-file overhead of experiment 02.
+
 ## quality matched comparison
 
 the all-intra battery (experiment 11) does not compare encoders at equal settings, because a crf of 35 means different things to different encoders. it calibrates each encoder to the same fidelity, ssimulacra2 mean 61.96 with a tolerance of 2 points, and then compares bytes. the anchor is the forge baseline, svt-av1 preset 6 crf 35 tune still, reproduced byte-identically (70,092,669 bytes) before anything else was encoded. x264 landed at crf 31, x265 at crf 32, avif at q48 speed 6 and q52 speed 9, vvenc at qp 22, cjxl lossy at distance 4.0.

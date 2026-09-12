@@ -2,7 +2,7 @@ cff-version: 1.2.0
 message: "if you use this benchmark or its artifacts, cite it as below. the citation key of a specific .nest file is its content_hash, read with nest inspect --json."
 type: dataset
 title: "mtg-nest-benchmark"
-version: 0.3.0
+version: 0.3.1
 date-released: 2026-09-12
 repository-code: "https://github.com/hoffresearch/mtg-nest-benchmark"
 license: "to be decided by the maintainer"
@@ -28,8 +28,8 @@ keywords:
   - scryfall
 identifiers:
   - type: other
-    value: "sha256:c993ceda5b42749487ebd20df7f9dc10e321f3f6099dc73e8008f6524b98a582"
-    description: "content_hash of the v0.3 neardup and archive releases"
-  - type: other
     value: "sha256:cb8fdf8f13fa50f93969de7603386f1c2b117a5e4946c60ac9894a3c5a1f062b"
-    description: "content_hash of the three experiment 13 candidates (av1 crf40, av1 crf50, avif q48)"
+    description: "content_hash of every full-corpus file since 2026-09-12: the v0.3 archive and neardup releases (rebuilt) and the three experiment 13 candidates (av1 crf40, av1 crf50, avif q48)"
+  - type: other
+    value: "sha256:c993ceda5b42749487ebd20df7f9dc10e321f3f6099dc73e8008f6524b98a582"
+    description: "historical: content_hash of the v0.3 neardup and archive releases as first built under the spellbook name; replaced by the 2026-09-12 rebuild"

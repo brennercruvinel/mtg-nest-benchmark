@@ -25,7 +25,13 @@ jobs:
 
       - name: no tracked file names a machine
         run: |
-          hits=$(git ls-files | xargs grep -l -e '/Users''/' -e '/home''/' -e 'Library/Application'' Support' || true)
+          hits=$(git ls-files | xargs grep -l -e '/Users''/' -e '/home''/' -e 'Library/Application'' Support' -e 'nn/D''ev' || true)
+          dashes=$(git ls-files | grep -v '^docs/archive/' | xargs grep -l -P '\x{2014}' || true)
+          if [ -n "$dashes" ]; then
+            echo "em dash in tracked files:"
+            echo "$dashes"
+            exit 1
+          fi
           if [ -n "$hits" ]; then
             echo "machine-local paths in tracked files:"
             echo "$hits"

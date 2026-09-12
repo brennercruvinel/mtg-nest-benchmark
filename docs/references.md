@@ -42,6 +42,10 @@ vmaf. https://github.com/Netflix/vmaf. not used, listed because ab-av1 targets i
 
 bd-rate (bjontegaard delta). the standard summary of one rate-distortion curve against another. four calibrated points per codec would let experiment 11 report it.
 
+## coding for machines
+
+image and video coding for machines (icm and vcm) is the standards name for compression judged by a downstream task instead of by a human viewer; the mpeg vcm exploration (iso/iec jtc 1/sc 29/wg 2, 2019 onward) and the jpeg ai call for proposals frame the rate-utility trade-off that experiment 13 measures with hit@k. the observation that a fidelity or feature-drift metric does not predict task accuracy is recurrent in that literature; this repository confirms it on one corpus and does not claim it.
+
 ## containers
 
 lance. https://github.com/lancedb/lance. the closest relative of the `.nest`: blob semantics, vectors, full text search. a lance dataset is a directory of fragments; a `.nest` is one file.

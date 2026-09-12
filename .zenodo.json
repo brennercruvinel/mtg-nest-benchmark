@@ -1,6 +1,6 @@
 {
   "title": "mtg-nest-benchmark",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "publication_date": "2026-09-12",
   "upload_type": "dataset",
   "description": "compression and retrieval benchmark of the 38,627-card magic: the gathering image corpus packed into single-file .nest containers with the nest engine: av1, avif and jpeg xl media variants, lossless batteries, inter-frame ordering over same-artwork reprints, an all-intra codec battery at matched ssimulacra2, and retrieval-only profiles measured on identity, embedding drift and text-to-image hit@k against a 3.975 GB jpeg source. the citation key of a specific .nest file is its content_hash.",
@@ -42,6 +42,6 @@
       "resource_type": "dataset"
     }
   ],
-  "access_right": "open",
-  "notes": "the license is to be decided by the maintainer. zenodo's github integration needs a public repository, so the doi is minted when the repository goes public."
+  "access_right": "restricted",
+  "notes": "the license is to be decided by the maintainer. access_right is restricted while the repository is private. zenodo's github integration needs a public repository, so the doi is minted when the repository goes public."
 }
