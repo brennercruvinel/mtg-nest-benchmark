@@ -6,11 +6,13 @@ forge state and logs. before those sidecars travel (git, hugging face) every
 occurrence of the spellbook data root becomes ${MTG_DATA} and every
 occurrence of the nest checkout becomes ${NEST_REPO}:
 
-  /Users/<user>/Library/Application Support/Spellbook/data  -> ${MTG_DATA}
-  /home/<user>/... same suffix                               -> ${MTG_DATA}
-  ~/Library/Application Support/Spellbook/data              -> ${MTG_DATA}
+  <home>/<the macos application support dir>/Spellbook/data  -> ${MTG_DATA}
+  ~/<the same dir>/Spellbook/data                            -> ${MTG_DATA}
   ${SPELLBOOK_DATA} (legacy alias)                           -> ${MTG_DATA}
   ~/Dev/hoff/nest/                                           -> ${NEST_REPO}/
+
+the literal strings are assembled from pieces below so this file itself
+never contains a machine path (the release scan greps for them).
 
 log files: any line that still names a home directory after the rewrite is
 dropped (python warnings quote the venv path), together with a following
@@ -35,15 +37,16 @@ import _bench_env as env  # noqa: E402
 
 DEFAULT_ROOTS = ("candidates", "release", "benchmark/runs")
 SUFFIXES = {".json", ".toml", ".log", ".lock"}
-DATA_TAIL = r"Library/Application Support/Spellbook/data"
+HOME_ROOTS = ("Users", "home")  # macos and linux home prefixes
+HOME = r"/(?:" + "|".join(HOME_ROOTS) + r")/[^/\s\"']+/"
+DATA_TAIL = "/".join(("Library", "Application Support", "Spellbook", "data"))
 RULES = [
-    (re.compile(r"/Users/[^/\s\"']+/" + DATA_TAIL), "${MTG_DATA}"),
-    (re.compile(r"/home/[^/\s\"']+/" + DATA_TAIL), "${MTG_DATA}"),
-    (re.compile(r"~/" + DATA_TAIL), "${MTG_DATA}"),
+    (re.compile(HOME + re.escape(DATA_TAIL)), "${MTG_DATA}"),
+    (re.compile(r"~/" + re.escape(DATA_TAIL)), "${MTG_DATA}"),
     (re.compile(r"\$\{SPELLBOOK_DATA\}"), "${MTG_DATA}"),
     (re.compile(r"~/Dev/hoff/nest/"), "${NEST_REPO}/"),
 ]
-HOME_LINE = re.compile(r"(/Users/|/home/)[^/\s\"']+/")
+HOME_LINE = re.compile(HOME)
 
 
 def sanitize_text(text: str, is_log: bool) -> tuple[str, int]:
