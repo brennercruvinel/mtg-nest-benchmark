@@ -1,0 +1,85 @@
+# 15-models-over-crf, lossy level crf35: av1 fixed crf 35, tune still, speed 6,
+# all-intra, same 512-card sample and the same five models as 15-lossless.toml.
+# crf35 is the neardup/still release class, crf50 the retrieval-only recipe
+# (profiles/retrieval.toml). fixed crf, no gate, so the bench isolates the
+# codec step alone. run from the repo root:
+#
+#   python python/tools/nest_forge.py --spec benchmark/experiments/15-models-over-crf/specs/15-crf35.toml --sample 512
+
+[corpus]
+name = "mtgdataset"
+title = "MTG card dataset (15-models-over-crf, 512-card sample)"
+chunker_version = "mtgdataset/1"
+reproducible = true
+
+[source]
+kind = "sqlite"
+db = "${MTG_DATA}/mtg.sqlite"
+query = """
+SELECT oracle_id, name, mana_cost, type_line, oracle_text, rarity, set_code, image_uri
+FROM cards WHERE image_uri IS NOT NULL
+"""
+order_by = ["img_id", "oracle_id"]   # total order: img_id + unique tiebreaker
+
+[source.derive]
+img_id = "basename_stem(image_uri)"
+
+[[source.joins]]
+query = "SELECT oracle_id, printed_name AS pt_name FROM names_localized WHERE lang='pt' AND lang_rank=1"
+on = "oracle_id"
+
+[source.text]
+template = """
+{name} ({pt_name})
+{mana_cost}; {type_line}
+[{rarity}, {set_code}]
+{oracle_text}
+"""
+
+[source.image]
+path_template = "${MTG_DATA}/images/normal/front/{img_id[0]}/{img_id[1]}/{img_id}.jpg"
+label_template = "{name}"
+
+[media]
+backend = "av1"
+crf = 35
+tune = "still"
+speed = 6
+gop = "intra"
+dedup = true
+
+[[models]]
+preset = "potion"
+text = "default"             # space 0, shared across the three builds via the embed cache
+
+[[models]]
+preset = "clip-vit-b32"
+image = "space"
+
+[[models]]
+preset = "siglip2"
+image = "space"
+
+[[models]]
+preset = "jina-v5-omni-nano"
+image = "space"
+dims = [256]
+batch_size = 16
+
+[[models]]
+preset = "wemm-2b"
+image = "space"
+dims = [256]
+batch_size = 8
+
+[build]
+preset = "hybrid"
+dtype = "int8"
+with_graph = true
+
+[output]
+mode = "single"
+dir = "benchmark/runs/15-crf35"
+provenance = "standard"
+embed_media = true
+allow_remote_code = ["jina-v5-omni-nano", "wemm-2b"]

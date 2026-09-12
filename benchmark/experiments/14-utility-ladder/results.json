@@ -1,0 +1,324 @@
+{
+ "experiment": "14-utility-ladder",
+ "title": "text-to-image utility at n=1000 on the five full-corpus files: lossless to crf50 inside one standard error",
+ "provenance": {
+  "status": "measured",
+  "source": "nest_model_bench.py (nest forge checkout at commit cbc326de, 2026-09-12) with --queries 1000 --seed 7 -k 1 5 10 --text-query-template 'artwork of the card {label}' on candidates/{archive,neardup,v03-retrieval,v03-retrieval-crf50,v03-avif-q48}/mtgdataset.nest with their full candidate manifests; raw bench output kept under bench/<name>.json; nest_bytes from the files on disk; the n=100 column is copied from experiment 13",
+  "date": "2026-09-12",
+  "notes": "same 1000 items in every run (default_rng(7) over the 38627 items, identical ordinals across files because all five manifests share the item order); clip-vit-b32 is the only image space in these files; hits matched by chunk_id. the archive and neardup files are the 2026-09-12 rebuilds, byte-identical to release/v0.3/{archive,neardup}/mtgdataset.nest (sha256 88242709... and 071233c5... match the release SHA256SUMS), media identical to the 2026-09-03 builds that experiment 13 measured at n=100. wall time is the whole bench process on apple silicon mps (clip load, 1000 source-image embeds, 1000 text embeds, 2000 searches) while a forge build chain ran on the same machine. the release-shaped manifest.json without the items list was not needed: every candidate dir carries the full mtgdataset.manifest.json sidecar and the bench read it directly. txt@k se is the binomial standard error sqrt(p(1-p)/n); z is (txt@1 - lossless txt@1) over the pooled se of the two rows. stills, crf55 and crf60 rows are left for a later pass, their builds were still running."
+ },
+ "constants": {
+  "source_bytes": 3975063106
+ },
+ "tables": [
+  {
+   "title": "three-tier bench at n=1000 (seed 7, 'artwork of the card {label}', clip-vit-b32 space, k=1/5/10)",
+   "columns": [
+    {
+     "key": "corpus",
+     "label": "corpus"
+    },
+    {
+     "key": "recipe",
+     "label": "media"
+    },
+    {
+     "key": "nest_bytes",
+     "label": "nest bytes",
+     "fmt": "int"
+    },
+    {
+     "key": "ratio_nest",
+     "label": "ratio_nest",
+     "fmt": "ratio",
+     "num": "source_bytes",
+     "den": "nest_bytes"
+    },
+    {
+     "key": "identity_at_1",
+     "label": "identity@1",
+     "fmt": "f3"
+    },
+    {
+     "key": "drift_p10",
+     "label": "drift p10",
+     "fmt": "f4"
+    },
+    {
+     "key": "txt_at_1",
+     "label": "txt@1",
+     "fmt": "f3"
+    },
+    {
+     "key": "txt_at_1_se",
+     "label": "se(txt@1)",
+     "fmt": "f4"
+    },
+    {
+     "key": "txt_at_5",
+     "label": "txt@5",
+     "fmt": "f3"
+    },
+    {
+     "key": "txt_at_10",
+     "label": "txt@10",
+     "fmt": "f3"
+    },
+    {
+     "key": "delta_txt_at_1_vs_lossless",
+     "label": "txt@1 minus lossless",
+     "fmt": "f3"
+    },
+    {
+     "key": "z_vs_lossless",
+     "label": "z vs lossless",
+     "fmt": "f2"
+    },
+    {
+     "key": "wall_s",
+     "label": "bench wall s",
+     "fmt": "f1"
+    }
+   ],
+   "rows": [
+    {
+     "corpus": "archive (lossless)",
+     "recipe": "jxl-transcode lossless, 38627 blobs",
+     "nest_bytes": 3606342844,
+     "identity_at_1": 1.0,
+     "identity_at_10": 1.0,
+     "drift_p10": 0.9968,
+     "drift_p50": 0.9991,
+     "txt_at_1": 0.092,
+     "txt_at_1_se": 0.0091,
+     "txt_at_5": 0.145,
+     "txt_at_5_se": 0.0111,
+     "txt_at_10": 0.178,
+     "txt_at_10_se": 0.0121,
+     "delta_txt_at_1_vs_lossless": 0.0,
+     "z_vs_lossless": 0.0,
+     "wall_s": 55.3,
+     "embed_items_per_s": 53.7,
+     "search_p50_ms": 4.255,
+     "n": 1000
+    },
+    {
+     "corpus": "neardup (av1 crf35)",
+     "recipe": "av1 crf35 tune still, cluster order, 19 shards",
+     "nest_bytes": 1374447548,
+     "identity_at_1": 1.0,
+     "identity_at_10": 1.0,
+     "drift_p10": 0.9666,
+     "drift_p50": 0.9825,
+     "txt_at_1": 0.096,
+     "txt_at_1_se": 0.0093,
+     "txt_at_5": 0.155,
+     "txt_at_5_se": 0.0114,
+     "txt_at_10": 0.181,
+     "txt_at_10_se": 0.0122,
+     "delta_txt_at_1_vs_lossless": 0.004,
+     "z_vs_lossless": 0.31,
+     "wall_s": 42.5,
+     "embed_items_per_s": 49.15,
+     "search_p50_ms": 4.344,
+     "n": 1000
+    },
+    {
+     "corpus": "avif q48",
+     "recipe": "avifenc q48 speed 8 yuv420, 38627 blobs",
+     "nest_bytes": 1195973116,
+     "identity_at_1": 1.0,
+     "identity_at_10": 1.0,
+     "drift_p10": 0.968,
+     "drift_p50": 0.9831,
+     "txt_at_1": 0.096,
+     "txt_at_1_se": 0.0093,
+     "txt_at_5": 0.151,
+     "txt_at_5_se": 0.0113,
+     "txt_at_10": 0.184,
+     "txt_at_10_se": 0.0123,
+     "delta_txt_at_1_vs_lossless": 0.004,
+     "z_vs_lossless": 0.31,
+     "wall_s": 36.1,
+     "embed_items_per_s": 59.86,
+     "search_p50_ms": 4.901,
+     "n": 1000
+    },
+    {
+     "corpus": "retrieval av1 crf40",
+     "recipe": "av1 crf40 tune still, single segment",
+     "nest_bytes": 980715452,
+     "identity_at_1": 1.0,
+     "identity_at_10": 1.0,
+     "drift_p10": 0.9594,
+     "drift_p50": 0.9776,
+     "txt_at_1": 0.089,
+     "txt_at_1_se": 0.009,
+     "txt_at_5": 0.147,
+     "txt_at_5_se": 0.0112,
+     "txt_at_10": 0.181,
+     "txt_at_10_se": 0.0122,
+     "delta_txt_at_1_vs_lossless": -0.003,
+     "z_vs_lossless": -0.23,
+     "wall_s": 34.4,
+     "embed_items_per_s": 60.43,
+     "search_p50_ms": 3.929,
+     "n": 1000
+    },
+    {
+     "corpus": "retrieval av1 crf50",
+     "recipe": "av1 crf50 tune still, single segment",
+     "nest_bytes": 532671548,
+     "identity_at_1": 0.998,
+     "identity_at_10": 1.0,
+     "drift_p10": 0.9389,
+     "drift_p50": 0.9614,
+     "txt_at_1": 0.093,
+     "txt_at_1_se": 0.0092,
+     "txt_at_5": 0.147,
+     "txt_at_5_se": 0.0112,
+     "txt_at_10": 0.17,
+     "txt_at_10_se": 0.0119,
+     "delta_txt_at_1_vs_lossless": 0.001,
+     "z_vs_lossless": 0.08,
+     "wall_s": 33.9,
+     "embed_items_per_s": 55.14,
+     "search_p50_ms": 4.165,
+     "n": 1000
+    }
+   ],
+   "notes": [
+    "the five txt@1 values span 0.089 to 0.096 with se 0.009 each; the largest gap to lossless is +0.004 (neardup, avif q48) and the largest z is 0.31, so at n=1000 no file is distinguishable from the lossless archive on the name ruler. the 95% interval on a per-file difference is about +-0.026 absolute, which is the resolving power of this test: a codec would have to cost more than a quarter of clip's txt@1 before this ruler could see it.",
+    "identity@1 is 1.000 on four files and 0.998 on crf50 (2 of 1000 source queries rank another card first; both are back inside the top 10). drift p10 falls monotonically with bytes, 0.9968 lossless, 0.9666 crf35, 0.9680 avif q48, 0.9594 crf40, 0.9389 crf50: the cosine sees the codec, the hit rate does not.",
+    "txt@5 spans 0.145 to 0.155 (se 0.011) and txt@10 0.170 to 0.184 (se 0.012); same picture at every k.",
+    "the ruler is clip-vit-b32 on the card name, weak ground truth declared as such (experiment 03): clip sees the art, not the printed name, so 0.09 is the ceiling of the ruler, not of the files. the gap between codecs is measured relative to that ceiling.",
+    "bench wall time per file is the full process including clip load; embed throughput 49 to 60 source items per second, search p50 3.9 to 4.9 ms per query on the single clip space."
+   ]
+  },
+  {
+   "title": "what n did: experiment 13 (n=100) beside this run (n=1000), same seed 7, same ruler",
+   "columns": [
+    {
+     "key": "corpus",
+     "label": "corpus"
+    },
+    {
+     "key": "txt_at_1_100",
+     "label": "txt@1 n=100",
+     "fmt": "f3"
+    },
+    {
+     "key": "txt_at_1_100_se",
+     "label": "se n=100",
+     "fmt": "f4"
+    },
+    {
+     "key": "txt_at_1_1000",
+     "label": "txt@1 n=1000",
+     "fmt": "f3"
+    },
+    {
+     "key": "txt_at_1_1000_se",
+     "label": "se n=1000",
+     "fmt": "f4"
+    },
+    {
+     "key": "delta_txt_at_1",
+     "label": "n=1000 minus n=100",
+     "fmt": "f3"
+    },
+    {
+     "key": "txt_at_5_100",
+     "label": "txt@5 n=100",
+     "fmt": "f3"
+    },
+    {
+     "key": "txt_at_5_1000",
+     "label": "txt@5 n=1000",
+     "fmt": "f3"
+    },
+    {
+     "key": "drift_p10_100",
+     "label": "drift p10 n=100",
+     "fmt": "f4"
+    },
+    {
+     "key": "drift_p10_1000",
+     "label": "drift p10 n=1000",
+     "fmt": "f4"
+    }
+   ],
+   "rows": [
+    {
+     "corpus": "archive (lossless)",
+     "txt_at_1_100": 0.05,
+     "txt_at_1_100_se": 0.0218,
+     "txt_at_5_100": 0.13,
+     "drift_p10_100": 0.9974,
+     "txt_at_1_1000": 0.092,
+     "txt_at_1_1000_se": 0.0091,
+     "txt_at_5_1000": 0.145,
+     "drift_p10_1000": 0.9968,
+     "delta_txt_at_1": 0.042
+    },
+    {
+     "corpus": "neardup (av1 crf35)",
+     "txt_at_1_100": 0.07,
+     "txt_at_1_100_se": 0.0255,
+     "txt_at_5_100": 0.14,
+     "drift_p10_100": 0.9706,
+     "txt_at_1_1000": 0.096,
+     "txt_at_1_1000_se": 0.0093,
+     "txt_at_5_1000": 0.155,
+     "drift_p10_1000": 0.9666,
+     "delta_txt_at_1": 0.026
+    },
+    {
+     "corpus": "avif q48",
+     "txt_at_1_100": 0.09,
+     "txt_at_1_100_se": 0.0286,
+     "txt_at_5_100": 0.12,
+     "drift_p10_100": 0.9719,
+     "txt_at_1_1000": 0.096,
+     "txt_at_1_1000_se": 0.0093,
+     "txt_at_5_1000": 0.151,
+     "drift_p10_1000": 0.968,
+     "delta_txt_at_1": 0.006
+    },
+    {
+     "corpus": "retrieval av1 crf40",
+     "txt_at_1_100": 0.08,
+     "txt_at_1_100_se": 0.0271,
+     "txt_at_5_100": 0.12,
+     "drift_p10_100": 0.9618,
+     "txt_at_1_1000": 0.089,
+     "txt_at_1_1000_se": 0.009,
+     "txt_at_5_1000": 0.147,
+     "drift_p10_1000": 0.9594,
+     "delta_txt_at_1": 0.009
+    },
+    {
+     "corpus": "retrieval av1 crf50",
+     "txt_at_1_100": 0.08,
+     "txt_at_1_100_se": 0.0271,
+     "txt_at_5_100": 0.15,
+     "drift_p10_100": 0.942,
+     "txt_at_1_1000": 0.093,
+     "txt_at_1_1000_se": 0.0092,
+     "txt_at_5_1000": 0.147,
+     "drift_p10_1000": 0.9389,
+     "delta_txt_at_1": 0.013
+    }
+   ],
+   "notes": [
+    "the n=100 column is the transcribed table of experiment 13 (no bench json survived); the 100-item and 1000-item draws of default_rng(7) share only 2 items (numpy's choice without replacement does not nest across sizes), so the two columns are independent samples of the same corpus.",
+    "at n=100 the spread across files was 0.050 to 0.090, a 0.040 range that looked like lossless losing to every lossy file; at n=1000 the spread is 0.089 to 0.096. the n=100 range was entirely sampling noise (se 0.022 to 0.029 per cell, so a 0.040 gap is about one pooled se).",
+    "drift p10 moved by at most 0.004 between the two draws: the cosine statistic was already stable at n=100, the hit rate was not."
+   ]
+  }
+ ],
+ "notes": [
+  "for the retrieval-only gate this means a hit@k floor set from n=100 runs cannot separate crf35 from crf50, and even n=1000 only bounds the loss at about 0.026 absolute on a 0.09 ruler. a gate on this ruler needs either a much larger n, a stronger ruler (a model that reads the printed name, experiment 03: siglip2 0.850, wemm-2b 0.933 txt@1 on the 1500 sample), or operator queries with expected ids (the bench's --queries-file tier), before it can veto a crf step on utility.",
+  "stills (av1 crf35 tune still, plain order), crf55 and crf60 were being built while this ran and are not in the table; they go in a later pass with the same command."
+ ]
+}
