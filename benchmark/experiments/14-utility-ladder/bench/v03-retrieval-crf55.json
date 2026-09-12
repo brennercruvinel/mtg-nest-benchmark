@@ -1,0 +1,42 @@
+{
+ "bench_schema_version": 1,
+ "index": "candidates/v03-retrieval-crf55/mtgdataset.nest",
+ "n_query_items": 1000,
+ "ks": [
+  1,
+  5,
+  10
+ ],
+ "tiers_note": "T1/T2/T3 answer different questions and are never aggregated",
+ "models": {
+  "clip-vit-b32": {
+   "embed_side_items_per_s": 36.13,
+   "build_items_per_s": 137.11,
+   "spaces": {
+    "clip-vit-b32": {
+     "t1_identity_recall": {
+      "@1": 0.995,
+      "@5": 0.999,
+      "@10": 0.999
+     },
+     "t2_drift_cosine": {
+      "p10": 0.9211,
+      "p50": 0.9483,
+      "n_found": 999
+     },
+     "latency_ms": {
+      "p50": 7.107,
+      "p95": 10.011
+     },
+     "band_bytes": null,
+     "t3_text_to_image_hit": {
+      "@1": 0.074,
+      "@5": 0.141,
+      "@10": 0.164
+     },
+     "t3_ruler": "label-template (weak ground truth)"
+    }
+   }
+  }
+ }
+}

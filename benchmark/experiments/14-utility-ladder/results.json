@@ -5,7 +5,7 @@
   "status": "measured",
   "source": "nest_model_bench.py (nest forge checkout at commit cbc326de, 2026-09-12) with --queries 1000 --seed 7 -k 1 5 10 --text-query-template 'artwork of the card {label}' on candidates/{archive,neardup,v03-retrieval,v03-retrieval-crf50,v03-avif-q48}/mtgdataset.nest with their full candidate manifests; raw bench output kept under bench/<name>.json; nest_bytes from the files on disk; the n=100 column is copied from experiment 13",
   "date": "2026-09-12",
-  "notes": "same 1000 items in every run (default_rng(7) over the 38627 items, identical ordinals across files because all five manifests share the item order); clip-vit-b32 is the only image space in these files; hits matched by chunk_id. the archive and neardup files are the 2026-09-12 rebuilds, byte-identical to release/v0.3/{archive,neardup}/mtgdataset.nest (sha256 88242709... and 071233c5... match the release SHA256SUMS), media identical to the 2026-09-03 builds that experiment 13 measured at n=100. wall time is the whole bench process on apple silicon mps (clip load, 1000 source-image embeds, 1000 text embeds, 2000 searches) while a forge build chain ran on the same machine. the release-shaped manifest.json without the items list was not needed: every candidate dir carries the full mtgdataset.manifest.json sidecar and the bench read it directly. txt@k se is the binomial standard error sqrt(p(1-p)/n); z is (txt@1 - lossless txt@1) over the pooled se of the two rows. stills, crf55 and crf60 rows are left for a later pass, their builds were still running."
+  "notes": "same 1000 items in every run (default_rng(7) over the 38627 items, identical ordinals across files because all five manifests share the item order); clip-vit-b32 is the only image space in these files; hits matched by chunk_id. the archive and neardup files are the 2026-09-12 rebuilds, byte-identical to release/v0.3/{archive,neardup}/mtgdataset.nest (sha256 88242709... and 071233c5... match the release SHA256SUMS), media identical to the 2026-09-03 builds that experiment 13 measured at n=100. wall time is the whole bench process on apple silicon mps (clip load, 1000 source-image embeds, 1000 text embeds, 2000 searches) while a forge build chain ran on the same machine. the release-shaped manifest.json without the items list was not needed: every candidate dir carries the full mtgdataset.manifest.json sidecar and the bench read it directly. txt@k se is the binomial standard error sqrt(p(1-p)/n); z is (txt@1 - lossless txt@1) over the pooled se of the two rows. stills, crf55 and crf60 rows are left for a later pass, their builds were still running. crf55 and crf60 were built and measured later the same day with the same command (05:10 to 05:15 local); their rows sit at the end of the table."
  },
  "constants": {
   "source_bytes": 3975063106
@@ -184,6 +184,48 @@
      "wall_s": 33.9,
      "embed_items_per_s": 55.14,
      "search_p50_ms": 4.165,
+     "n": 1000
+    },
+    {
+     "corpus": "retrieval crf55",
+     "recipe": "av1 crf55 tune still intra, one blob",
+     "nest_bytes": 370108284,
+     "identity_at_1": 0.995,
+     "identity_at_10": 0.999,
+     "drift_p10": 0.9211,
+     "drift_p50": 0.9483,
+     "txt_at_1": 0.074,
+     "txt_at_1_se": 0.0083,
+     "txt_at_5": 0.141,
+     "txt_at_5_se": 0.011,
+     "txt_at_10": 0.164,
+     "txt_at_10_se": 0.0117,
+     "delta_txt_at_1_vs_lossless": -0.018,
+     "z_vs_lossless": -1.46,
+     "wall_s": null,
+     "embed_items_per_s": null,
+     "search_p50_ms": null,
+     "n": 1000
+    },
+    {
+     "corpus": "retrieval crf60",
+     "recipe": "av1 crf60 tune still intra, one blob",
+     "nest_bytes": 229972284,
+     "identity_at_1": 0.971,
+     "identity_at_10": 0.992,
+     "drift_p10": 0.8866,
+     "drift_p50": 0.92,
+     "txt_at_1": 0.069,
+     "txt_at_1_se": 0.008,
+     "txt_at_5": 0.107,
+     "txt_at_5_se": 0.0098,
+     "txt_at_10": 0.136,
+     "txt_at_10_se": 0.0108,
+     "delta_txt_at_1_vs_lossless": -0.023,
+     "z_vs_lossless": -1.89,
+     "wall_s": null,
+     "embed_items_per_s": null,
+     "search_p50_ms": null,
      "n": 1000
     }
    ],
