@@ -1,0 +1,7 @@
+content_hash = sha256:c993ceda5b42749487ebd20df7f9dc10e321f3f6099dc73e8008f6524b98a582
+file_hash = sha256:ee96af4cd332e55f87dce4f8146ccd83125d6597e53b3cdc9077ca47ba53237c
+chunker_version = spellbook/1
+title = Spellbook MTG corpus (near-dup profile, self-contained)
+n_chunks = 38627
+built_with = nest 0.3.0
+read_with = nest inspect --json

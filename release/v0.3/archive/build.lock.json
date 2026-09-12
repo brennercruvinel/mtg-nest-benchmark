@@ -127,13 +127,13 @@
   },
   "reproducible": true,
   "source": {
-   "db": "${SPELLBOOK_DATA}/mtg.sqlite",
+   "db": "${MTG_DATA}/mtg.sqlite",
    "derive": {
     "img_id": "basename_stem(image_uri)"
    },
    "image": {
     "label_template": "{name}",
-    "path_template": "${SPELLBOOK_DATA}/images/normal/front/{img_id[0]}/{img_id[1]}/{img_id}.jpg"
+    "path_template": "${MTG_DATA}/images/normal/front/{img_id[0]}/{img_id[1]}/{img_id}.jpg"
    },
    "input_dir": "",
    "joins": [
