@@ -1,0 +1,28 @@
+# heavy artifacts: never tracked, hosted on hugging face
+*.nest
+*.mp4
+*.avif
+*.jxl
+!benchmark/experiments/11-intra-codecs/samples/*
+!benchmark/sample-2048/iframe/samples/*
+*.npz
+
+# forge build state and caches
+.cache/
+.forge-state/
+.tmp/
+*.media/
+
+# build outputs and candidates live outside git
+benchmark/runs/
+candidates/
+items.jsonl.gz
+
+# legacy locations, removed once the tree is restructured
+benchmark/sample-2048/runs/
+benchmark/candidates/
+release/*/.build/mtgdataset.manifest.json
+
+# os and python noise
+.DS_Store
+__pycache__/

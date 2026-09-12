@@ -1,0 +1,61 @@
+[corpus]
+name = "mtgdataset"
+title = "MTG dataset bench variant"
+chunker_version = "mtgdataset/1"
+reproducible = true
+
+[source]
+kind = "sqlite"
+db = "~/Library/Application Support/Spellbook/data/mtg.sqlite"
+query = """
+SELECT oracle_id, name, mana_cost, type_line, oracle_text, rarity, set_code, image_uri
+FROM cards WHERE image_uri IS NOT NULL
+"""
+order_by = ["img_id", "oracle_id"]
+
+[source.derive]
+img_id = "basename_stem(image_uri)"
+
+[source.text]
+template = """
+{name}
+{mana_cost}; {type_line}
+[{rarity}, {set_code}]
+{oracle_text}
+"""
+
+[source.image]
+path_template = "~/Library/Application Support/Spellbook/data/images/normal/front/{img_id[0]}/{img_id[1]}/{img_id}.jpg"
+label_template = "{name}"
+
+[media]
+backend = "av1"
+crf = 35
+tune = "still"
+speed = 6
+gop = "auto"
+order = "cluster"
+shard_size = 2048
+dedup = true
+
+[media.cluster]
+space = "clip-vit-b32"
+threshold = 0.92
+
+[[models]]
+preset = "potion"
+text = "default"
+
+[[models]]
+preset = "clip-vit-b32"
+image = "space"
+
+[build]
+preset = "hybrid"
+dtype = "int8"
+with_graph = true
+
+[output]
+mode = "single"
+dir = "~/Dev/hoff/nest/dat/mtg/bench/runs/av1-cluster-crf35"
+provenance = "standard"

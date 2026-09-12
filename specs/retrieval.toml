@@ -1,0 +1,80 @@
+# mtgdataset v0.3 candidate — retrieval-only profile.
+# The dual gate's visual floors are deliberately DROPPED (-1e9): the only
+# floor is embedding drift (clip p10 >= 0.98). Hypothesis from the v03 bench:
+# retrieval survives far more compression than the eye (drift 0.97-0.99 at
+# crf35), so the ladder is opened to [40..60] and the gate picks the largest
+# crf the retrieval signal tolerates. NOT for serving display-quality images.
+#
+#   nest build --spec dat/mtg/specs/retrieval.toml
+
+[corpus]
+name = "mtgdataset"
+title = "MTG card dataset (retrieval-only profile, self-contained)"
+chunker_version = "mtgdataset/1"
+reproducible = true
+
+[source]
+kind = "sqlite"
+db = "~/Library/Application Support/Spellbook/data/mtg.sqlite"
+query = """
+SELECT oracle_id, name, mana_cost, type_line, oracle_text, rarity, set_code, image_uri
+FROM cards WHERE image_uri IS NOT NULL
+"""
+order_by = ["img_id", "oracle_id"]
+
+[source.derive]
+img_id = "basename_stem(image_uri)"
+
+[[source.joins]]
+query = "SELECT oracle_id, printed_name AS pt_name FROM names_localized WHERE lang='pt' AND lang_rank=1"
+on = "oracle_id"
+
+[source.text]
+template = """
+{name} ({pt_name})
+{mana_cost}; {type_line}
+[{rarity}, {set_code}]
+{oracle_text}
+"""
+
+[source.image]
+path_template = "~/Library/Application Support/Spellbook/data/images/normal/front/{img_id[0]}/{img_id[1]}/{img_id}.jpg"
+label_template = "{name}"
+
+[media]
+backend = "av1"
+crf = "auto"
+tune = "still"
+speed = 6
+gop = "intra"
+order = "none"
+shard_size = 40960          # > n_items: um único segmento de vídeo
+dedup = true
+
+[media.quality]
+gate_model = "clip-vit-b32"
+visual_floor_p10 = -1e9     # retrieval-only: no perceptual floor
+visual_floor_min = -1e9
+drift_floor_p10 = 0.98
+crf_ladder = [40, 45, 50, 55, 60]
+sample_per_bucket = 12
+buckets = ["resolution", "entropy", "has_text"]
+
+[[models]]
+preset = "potion"
+text = "default"
+
+[[models]]
+preset = "clip-vit-b32"
+image = "space"
+
+[build]
+preset = "hybrid"
+dtype = "int8"
+with_graph = true
+
+[output]
+mode = "single"
+dir = "dat/mtg/benchmark/candidates/v03-retrieval"
+provenance = "standard"
+embed_media = true

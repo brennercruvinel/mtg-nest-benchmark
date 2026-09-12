@@ -1,0 +1,70 @@
+# mtgdataset v0.3 near-dup — corpus completo com o perfil medido para
+# reimpressões/quase-duplicatas: order=cluster + gop por segmento + tune
+# still (bench 2026-08-31: -29% em reimpressões, sem perder carta).
+# Single-file: mídia embutida via 0x17.
+#
+#   nest build --spec dat/mtg/release/v03-still-neardup.toml
+
+[corpus]
+name = "mtgdataset"
+title = "MTG card dataset (near-dup profile, self-contained)"
+chunker_version = "mtgdataset/1"
+reproducible = true
+
+[source]
+kind = "sqlite"
+db = "~/Library/Application Support/Spellbook/data/mtg.sqlite"
+query = """
+SELECT oracle_id, name, mana_cost, type_line, oracle_text, rarity, set_code, image_uri
+FROM cards WHERE image_uri IS NOT NULL
+"""
+order_by = ["img_id", "oracle_id"]
+
+[source.derive]
+img_id = "basename_stem(image_uri)"
+
+[[source.joins]]
+query = "SELECT oracle_id, printed_name AS pt_name FROM names_localized WHERE lang='pt' AND lang_rank=1"
+on = "oracle_id"
+
+[source.text]
+template = """
+{name} ({pt_name})
+{mana_cost}; {type_line}
+[{rarity}, {set_code}]
+{oracle_text}
+"""
+
+[source.image]
+path_template = "~/Library/Application Support/Spellbook/data/images/normal/front/{img_id[0]}/{img_id[1]}/{img_id}.jpg"
+label_template = "{name}"
+
+[media]
+profile = "near-dup"        # order=cluster + gop=auto (probe POR SEGMENTO) + tune=still
+crf = 35
+speed = 6
+shard_size = 2048           # 19 segmentos: cada um decide intra/inter sozinho
+dedup = true
+
+[media.cluster]
+space = "clip-vit-b32"
+threshold = 0.92
+
+[[models]]
+preset = "potion"
+text = "default"
+
+[[models]]
+preset = "clip-vit-b32"
+image = "space"
+
+[build]
+preset = "hybrid"
+dtype = "int8"
+with_graph = true
+
+[output]
+mode = "single"
+dir = "dat/mtg/release/v03-neardup"
+provenance = "standard"
+embed_media = true

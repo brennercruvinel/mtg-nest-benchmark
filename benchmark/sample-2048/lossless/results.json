@@ -1,0 +1,73 @@
+{
+ "_source": {
+  "bytes": 211018809,
+  "files": 2048
+ },
+ "jxl-transcode-e9": {
+  "bytes": 187736464,
+  "files": 2048,
+  "encode_s": 493.2,
+  "class": "byte-reversible",
+  "verified": "64/64 roundtrips sha256-ok",
+  "ratio_vs_source": 1.124
+ },
+ "jpegtran-optimize": {
+  "bytes": 209633615,
+  "files": 2048,
+  "encode_s": 74.7,
+  "class": "pixel-exact",
+  "verified": "32/32 pixel-identical",
+  "ratio_vs_source": 1.007
+ },
+ "jpegtran-progressive": {
+  "bytes": 209633689,
+  "files": 2048,
+  "encode_s": 56.1,
+  "class": "pixel-exact",
+  "verified": "32/32 pixel-identical",
+  "ratio_vs_source": 1.007
+ },
+ "jpegoptim-strip": {
+  "bytes": 211009267,
+  "files": 2048,
+  "encode_s": 16.5,
+  "class": "pixel-exact",
+  "verified": "32/32 pixel-identical",
+  "ratio_vs_source": 1.0
+ },
+ "webp-lossless": {
+  "bytes": 803293814,
+  "files": 2048,
+  "encode_s": 335.0,
+  "class": "pixel-domain (decoded)",
+  "ratio_vs_source": 0.263
+ },
+ "jxl-transcode+zstd19": {
+  "bytes": 188919603,
+  "files": 1,
+  "encode_s": 1.4,
+  "class": "byte-reversible",
+  "ratio_vs_source": 1.117
+ },
+ "video-ffv1-srcorder": {
+  "bytes": 783186432,
+  "files": 1,
+  "encode_s": 9.9,
+  "class": "pixel-domain (decoded)",
+  "ratio_vs_source": 0.269
+ },
+ "video-ffv1-clusterorder": {
+  "bytes": 783049555,
+  "files": 1,
+  "encode_s": 9.0,
+  "class": "pixel-domain (decoded)",
+  "ratio_vs_source": 0.269
+ },
+ "video-x264qp0-clusterorder": {
+  "bytes": 699842163,
+  "files": 1,
+  "encode_s": 11.6,
+  "class": "pixel-domain (decoded, yuv444)",
+  "ratio_vs_source": 0.302
+ }
+}

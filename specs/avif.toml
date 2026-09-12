@@ -1,0 +1,66 @@
+# mtgdataset v0.3 candidate — avif (aom) intra backend at matched quality.
+# The i-frame battery (benchmark/sample-2048/iframe) measured avifenc q48 at
+# ssim2 mean 60.7 vs the svt still baseline's 62.0 for -12.4% bytes. This
+# builds the full corpus on that setting (crf maps to avifenc -q; one .avif
+# per image keeps O(1) access without video decode).
+#
+#   nest build --spec dat/mtg/specs/avif.toml
+
+[corpus]
+name = "mtgdataset"
+title = "MTG card dataset (avif q48, self-contained)"
+chunker_version = "mtgdataset/1"
+reproducible = true
+
+[source]
+kind = "sqlite"
+db = "~/Library/Application Support/Spellbook/data/mtg.sqlite"
+query = """
+SELECT oracle_id, name, mana_cost, type_line, oracle_text, rarity, set_code, image_uri
+FROM cards WHERE image_uri IS NOT NULL
+"""
+order_by = ["img_id", "oracle_id"]
+
+[source.derive]
+img_id = "basename_stem(image_uri)"
+
+[[source.joins]]
+query = "SELECT oracle_id, printed_name AS pt_name FROM names_localized WHERE lang='pt' AND lang_rank=1"
+on = "oracle_id"
+
+[source.text]
+template = """
+{name} ({pt_name})
+{mana_cost}; {type_line}
+[{rarity}, {set_code}]
+{oracle_text}
+"""
+
+[source.image]
+path_template = "~/Library/Application Support/Spellbook/data/images/normal/front/{img_id[0]}/{img_id[1]}/{img_id}.jpg"
+label_template = "{name}"
+
+[media]
+backend = "avif"
+crf = 48                    # avifenc -q 48 (calibrated row of the i-frame battery)
+order = "none"
+dedup = true
+
+[[models]]
+preset = "potion"
+text = "default"
+
+[[models]]
+preset = "clip-vit-b32"
+image = "space"
+
+[build]
+preset = "hybrid"
+dtype = "int8"
+with_graph = true
+
+[output]
+mode = "single"
+dir = "dat/mtg/benchmark/candidates/v03-avif-q48"
+provenance = "standard"
+embed_media = true

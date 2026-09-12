@@ -1,0 +1,188 @@
+{
+ "device": "auto",
+ "lock_schema_version": 1,
+ "models": {
+  "clip-vit-b32": "sha256:76269ff6bb18be70a910506ccd31d52216b05a4bede0772ac17c0100ee75ca8f",
+  "potion": "sha256:8f2eb91a754b4da59cdd8223d0ba196185fed1bb6f092fd2be0ff02b893b1c98"
+ },
+ "packages": {
+  "numpy": "2.5.2",
+  "open-clip-torch": "3.3.0",
+  "pillow": "12.3.0",
+  "python": "3.12.14",
+  "sentence-transformers": "6.0.1",
+  "tokenizers": "0.22.2",
+  "torch": "2.13.0",
+  "transformers": "5.2.0"
+ },
+ "platform": {
+  "machine": "arm64",
+  "os": "Darwin",
+  "release": "25.5.0"
+ },
+ "resolved_spec": {
+  "build": {
+   "dtype": "int8",
+   "graph_space": "default",
+   "graph_top_m": 8,
+   "mrl_dim": 0,
+   "preset": "hybrid",
+   "with_graph": true
+  },
+  "chunker_version": "mtgdataset/1",
+  "image_input": {
+   "mode": ""
+  },
+  "media": {
+   "backend": "jxl-transcode",
+   "cluster": {
+    "space": "",
+    "threshold": 0.92
+   },
+   "crf": 35,
+   "dedup": true,
+   "fps": 1,
+   "gop": "auto",
+   "jxl_transcode": {
+    "keep_metadata": false,
+    "on_unsupported_jpeg": "copy-source",
+    "verify_roundtrip": true
+   },
+   "order": "none",
+   "pix_fmt": "yuv420p",
+   "profile": "archive",
+   "quality": {
+    "buckets": [
+     "resolution",
+     "entropy",
+     "has_text",
+     "alpha",
+     "source_format"
+    ],
+    "crf_ladder": [
+     30,
+     35,
+     40,
+     45
+    ],
+    "drift_floor_p10": 0.98,
+    "gate_model": "",
+    "sample_per_bucket": 12,
+    "strategy": "stratified",
+    "visual_floor_min": 72.0,
+    "visual_floor_p10": 85.0
+   },
+   "shard_size": 2048,
+   "speed": 8,
+   "tune": "default",
+   "width": 1024
+  },
+  "models": [
+   {
+    "batch_size": 32,
+    "device": "",
+    "dims": [],
+    "dtype": "",
+    "encode_kwargs": {},
+    "image": "none",
+    "image_max_side": 0,
+    "image_mode": "",
+    "image_prompt": "",
+    "model_path": "",
+    "normalize": true,
+    "preprocess_version": "",
+    "preset": "potion",
+    "space_dtype": "int8",
+    "text": "default",
+    "text_corpus_mode": "",
+    "text_query_mode": ""
+   },
+   {
+    "batch_size": 32,
+    "device": "",
+    "dims": [],
+    "dtype": "",
+    "encode_kwargs": {},
+    "image": "space",
+    "image_max_side": 0,
+    "image_mode": "",
+    "image_prompt": "",
+    "model_path": "",
+    "normalize": true,
+    "preprocess_version": "",
+    "preset": "clip-vit-b32",
+    "space_dtype": "int8",
+    "text": "none",
+    "text_corpus_mode": "",
+    "text_query_mode": ""
+   }
+  ],
+  "name": "mtgdataset",
+  "output": {
+   "allow_remote_code": [],
+   "dir": "dat/copusMTG/benchmark/full-38627/archive",
+   "embed_media": true,
+   "mode": "single",
+   "provenance": "standard"
+  },
+  "reproducible": true,
+  "source": {
+   "db": "${SPELLBOOK_DATA}/mtg.sqlite",
+   "derive": {
+    "img_id": "basename_stem(image_uri)"
+   },
+   "image": {
+    "label_template": "{name}",
+    "path_template": "${SPELLBOOK_DATA}/images/normal/front/{img_id[0]}/{img_id[1]}/{img_id}.jpg"
+   },
+   "input_dir": "",
+   "joins": [
+    {
+     "on": "oracle_id",
+     "query": "SELECT oracle_id, printed_name AS pt_name FROM names_localized WHERE lang='pt' AND lang_rank=1"
+    }
+   ],
+   "kind": "sqlite",
+   "labels": "",
+   "order_by": [
+    "img_id",
+    "oracle_id"
+   ],
+   "path": "",
+   "query": "SELECT oracle_id, name, mana_cost, type_line, oracle_text, rarity, set_code, image_uri\nFROM cards WHERE image_uri IS NOT NULL\n",
+   "text": {
+    "template": "{name} ({pt_name})\n{mana_cost}; {type_line}\n[{rarity}, {set_code}]\n{oracle_text}\n"
+   }
+  },
+  "spec_path": "dat/copusMTG/mtgdataset-v03-archive.toml",
+  "title": "MTG card dataset (lossless archive, self-contained)",
+  "version": "0.1.0"
+ },
+ "tools": {
+  "cjxl": {
+   "path": "/opt/homebrew/bin/cjxl",
+   "sha256": "a46d164e7e5eef387760d6221ae5eb411682d2fe96114df1b4d09cce6279a8f3",
+   "version": "Unknown argument: -version"
+  },
+  "djxl": {
+   "path": "/opt/homebrew/bin/djxl",
+   "sha256": "45b4cb9035665a53d8434ac9be48824ece2b961768a617673f9577ef89bb4791",
+   "version": "Unknown argument: -version"
+  },
+  "ffmpeg": {
+   "path": "/opt/homebrew/bin/ffmpeg",
+   "sha256": "9f5ddd4f8b36eb07b0c5d60ab6ea1e618bedd70bc45feab82b4dc23be1596ad1",
+   "version": "ffmpeg version 9.0.1 Copyright (c) 2000-2026 the FFmpeg developers"
+  },
+  "ffprobe": {
+   "path": "/opt/homebrew/bin/ffprobe",
+   "sha256": "0ecd5e1affb1466b129b4f65bee261e9ab625c4d4a2e7c3e9089f63d44808605",
+   "version": "ffprobe version 9.0.1 Copyright (c) 2007-2026 the FFmpeg developers"
+  },
+  "ssimulacra2": {
+   "path": "/opt/homebrew/bin/ssimulacra2",
+   "sha256": "94e8a021485570bfe0cfa454c9e70bbabbd6b2fdf3b3e884aa44b45fb662f195",
+   "version": "Usage: /opt/homebrew/bin/ssimulacra2 original.png distorted.png"
+  }
+ }
+}
