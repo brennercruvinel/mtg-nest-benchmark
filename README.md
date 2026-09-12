@@ -42,7 +42,7 @@ the `.nest` files, the loose media and the embed caches are gitignored. `candida
 
 ## reproducing
 
-two environment variables and the nest cli. `MTG_DATA` points at the spellbook data root (`mtg.sqlite` plus `images/normal/front/`), `NEST_REPO` at a checkout of hoffresearch/nest. the forge needs `${VAR}` expansion in spec paths, which is a pull request pending in nest at the time of writing.
+two environment variables and the nest cli. `MTG_DATA` points at the spellbook data root (`mtg.sqlite` plus `images/normal/front/`), `NEST_REPO` at a checkout of hoffresearch/nest. the forge expands `${VAR}` in spec paths since nest pull request #131 (merged 2026-09-12), and keeps its embed cache under `${XDG_CACHE_HOME:-~/.cache}/nest` since #133; use a checkout at or after commit 7dc3cc78.
 
 ```
 export MTG_DATA=/path/to/Spellbook/data

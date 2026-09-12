@@ -34,7 +34,7 @@ issue: https://github.com/hoffresearch/mtg-nest-benchmark/issues/5
 
 ## the avif source_bytes fix and the candidate manifest
 
-the avif backend of the nest forge sums its letterboxed png intermediates as source_bytes, so the avif candidate manifest records 21,450,566,470 bytes of source and a ratio of 18.61 for a 3,975,063,106-byte jpeg corpus. a pull request in nest passes the real source size into encode_avif; once it lands the candidate manifest must be regenerated (or patched) so that anything reading `media.compression_ratio` stops seeing a 5.4x inflation.
+done on 2026-09-12. the avif backend of the nest forge summed its letterboxed png intermediates as source_bytes, so the avif candidate manifest recorded 21,450,566,470 bytes of source and a ratio of 18.61 for a 3,975,063,106-byte jpeg corpus. nest pull request #132 passes the real source size into encode_avif and records the png sum as `letterboxed_input_bytes`; the candidate manifest on disk and on hugging face was patched by hand the same day (source_bytes 3,975,063,106, ratio 3.45, a `patched` note in the media block). what remains is cosmetic: a rebuild of the avif candidate with the fixed forge would make its lock reproduce the manifest without the hand patch.
 
 issue: https://github.com/hoffresearch/mtg-nest-benchmark/issues/6
 

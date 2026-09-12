@@ -18,7 +18,7 @@
  "platform": {
   "machine": "arm64",
   "os": "Darwin",
-  "release": "25.5.0"
+  "release": "25.6.0"
  },
  "resolved_spec": {
   "build": {
@@ -120,7 +120,7 @@
   "name": "mtgdataset",
   "output": {
    "allow_remote_code": [],
-   "dir": "dat/copusMTG/benchmark/full-38627/archive",
+   "dir": "candidates/archive",
    "embed_media": true,
    "mode": "single",
    "provenance": "standard"
@@ -154,7 +154,7 @@
     "template": "{name} ({pt_name})\n{mana_cost}; {type_line}\n[{rarity}, {set_code}]\n{oracle_text}\n"
    }
   },
-  "spec_path": "dat/copusMTG/mtgdataset-v03-archive.toml",
+  "spec_path": "profiles/archive.toml",
   "title": "MTG card dataset (lossless archive, self-contained)",
   "version": "0.1.0"
  },

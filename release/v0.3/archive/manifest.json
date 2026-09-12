@@ -1,5 +1,5 @@
 {
- "corpus_input_hash": "sha256:ba715edd5c3fdf5f1a44ca94bbe8eba3787e1407d3b31bd5012049746dbc6914",
+ "corpus_input_hash": "sha256:5639a3b761d9a82388d4e2e47572ba3d25038997b3cdd4522ad82b5c01b59a74",
  "items": {
   "fields": [
    "image_path",
@@ -231799,7 +231799,7 @@
  "models": {
   "clip-vit-b32": {
    "embedding_recipe_hash": "sha256:bb9f47ea56da60b2f7114453edb970eba7a7f1062d7e0767546a139274a3a4a6",
-   "items_per_s": 39.39,
+   "items_per_s": 44.26,
    "model_hash": "sha256:76269ff6bb18be70a910506ccd31d52216b05a4bede0772ac17c0100ee75ca8f",
    "recipe": {
     "adapter_version": 1,
@@ -231826,17 +231826,10 @@
    }
   },
   "potion": {
-   "embedding_recipe_hash": "sha256:c7757524f6dd497ddc9994e81d837b9b4c73801cc86121ee57a71377e2ee1cac",
+   "embedding_recipe_hash": "sha256:b081e0ecc2c051f89e20eea9efe6071f094a5b943b71a364db2a8206ac042dbb",
    "model_hash": "sha256:8f2eb91a754b4da59cdd8223d0ba196185fed1bb6f092fd2be0ff02b893b1c98",
    "recipe": {
     "adapter_version": 1,
-    "decoder": {
-     "backend": "jxl-transcode",
-     "canvas": null,
-     "crf": null,
-     "pix_fmt": null,
-     "provenance_sha256": "sha256:4f4dad110262c70a5fa1f647fff24cabffab4135340f724c4d334e88d09a8168"
-    },
     "device_class": "auto",
     "encode_kwargs": {},
     "image_doc_format": "dict",
@@ -231858,10 +231851,10 @@
  "name": "mtgdataset",
  "outputs": {
   "mtgdataset.nest": {
-   "build_s": 137.869,
-   "bytes": 3606304124,
-   "file": "benchmark/full-38627/archive/mtgdataset.nest",
-   "file_hash": "sha256:531d09c760b818660a0797be8b4ff2fe73850ccd301eb79d97f75ea98f0fb760"
+   "build_s": 239.854,
+   "bytes": 3606342844,
+   "file": "candidates/archive/mtgdataset.nest",
+   "file_hash": "sha256:882427094aa6035aa1ddf6abd26444f1598345fb9be3a66612f50b99be377eeb"
   }
  },
  "provenance_mode": "standard",
@@ -231877,9 +231870,9 @@
  "sql": "",
  "text_quality": "template",
  "timings": {
-  "embed.clip-vit-b32": 980.573,
+  "embed.clip-vit-b32": 872.736,
   "embed.potion": 0.0,
   "media": 0.0,
-  "rows": 24.323
+  "rows": 24.885
  }
 }
