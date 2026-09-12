@@ -15,9 +15,9 @@ or sidecars on disk, `transcribed` means they were copied from a report whose ar
 
 ## 01 baselines: archive-tool baselines over the 2048 source jpegs
 
-hypothesis: to be written by the docs pass
-method: to be written by the docs pass
-verdict: to be written by the docs pass
+hypothesis: a generic archiver over the 2048 source jpegs yields something, and whatever it yields is the floor a codec has to beat.
+method: tar and tar --zstd with ZSTD_CLEVEL=19 over the same 2048 files the variants encode (211,018,809 bytes), sizes read from the archives; recorded by measure_variants.py under the _baselines key of measurements.json.
+verdict: refuted, 1.00x. tar adds 2.7% of headers, zstd-19 takes it back and nothing more; jpeg is already entropy coded, so every gain in the other experiments comes from an image or video codec, never from the container.
 
 ### baselines
 
@@ -33,9 +33,9 @@ provenance: measured; source: benchmark/experiments/02-av1-variants/measurements
 
 ## 02 av1-variants: codec variants on the 2048-card sample
 
-hypothesis: to be written by the docs pass
-method: to be written by the docs pass
-verdict: to be written by the docs pass
+hypothesis: the v0.2 recipe (crf35, speed 8, default tune) was a poor point on the quality-per-byte curve, and fps, inter prediction, semantic ordering and the dual gate each move bytes or quality in a way that can be isolated by changing one key at a time.
+method: nest build --spec with --sample 2048 for each variant, then measure_variants.py: media bytes on disk, nest bytes, encode seconds from the manifest, and on the fixed 96-frame sample (default_rng(7)) ssimulacra2 of the letterboxed source against the decoded frame plus clip cosine drift; lossless classes asserted by sha256 round-trip (bytes) or by the codec's own decoder (pixels).
+verdict: tune=still is the upgrade, +10.9 ssim2 p50 (51.8 to 62.7) for +10% bytes at the same crf; fps changes nothing (fps30 intra is byte-identical to still-s6); inter with the old probe costs +18% bytes at lower quality on unique cards; cluster ordering was applied and the probe chose intra, so it cost time and nothing else; the dual gate refused the whole [30..45] ladder and fell back to crf30; avif at "crf35" is another point of the curve (5.48x at p10 34) and not comparable at the same number; embedding the media in the .nest costs 3.0% over the media.
 
 ### variants
 
@@ -64,9 +64,9 @@ provenance: measured; source: benchmark/experiments/02-av1-variants/measurements
 
 ## 03 image-models: five models on a 1500-card sample: identity, drift, text-to-image utility
 
-hypothesis: to be written by the docs pass
-method: to be written by the docs pass
-verdict: to be written by the docs pass
+hypothesis: the image models differ far more in what they read from a card than in how they tolerate the codec, so identity, drift and text-to-image utility have to be reported as three numbers, and a model that reads the printed name will beat clip on the name query by a wide margin.
+method: nest build --spec specs/mtgdataset-1500.toml --sample 1500 with potion, clip-vit-b32, siglip2, jina-v5-omni-nano@256 and wemm-2b@256; nest_model_bench.py with 60 seeded queries, t1 identity@1 from the source image, t2 drift p10 between source and decoded-frame embeddings, t3 txt@k with the ruler "artwork of the card {name}" against each model's own image space; embed throughput in items per second on apple silicon mps fp16.
+verdict: confirmed. identity@1 is 1.000 for all four image models; drift p10 runs from 0.967 (clip) to 0.990 (wemm); txt@1 goes from 0.233 (clip, which sees only the art) to 0.933 (wemm-2b sliced to 256 of 2048 dims), with siglip2 at 0.850 and jina at 0.617; the models that read the printed text find the exact card by its name, and the cost is throughput, 0.6 and 0.3 items per second against clip's 17.
 
 ### models
 
@@ -86,9 +86,9 @@ provenance: transcribed; source: nest doc/CHANGELOG (unreleased, verification nu
 
 ## 05 full-corpus: the full corpus, 38627 cards, one self-contained .nest per row
 
-hypothesis: to be written by the docs pass
-method: to be written by the docs pass
-verdict: to be written by the docs pass
+hypothesis: the recipes that won on the 2048 sample scale to the full corpus with the same ratios, the single-file overhead stays around 3%, and three builds with different media share one content_hash.
+method: nest build --spec for the still, neardup and archive recipes with embed_media = true; sizes read from the files on disk on 2026-09-12, media bytes and timings from the build manifests, content_hash and chunker_version with nest inspect --json; ratio_nest divides the 3,975,063,106-byte source by the whole file and ratio_media by the embedded media blob.
+verdict: confirmed on ratios and overhead, with two surprises recorded in the manifests: neardup is 1.374 GB (2.89x on the .nest, 2.98x on media) and its probe vetoed inter on all 19 segments with the reason inter-degrades-quality, so it differs from the still build (1.356 GB, 2.93x) only by tune_resolved and ordering; the archive is 3.606 GB (1.10x on the .nest, 1.12x on media) with 38,627 of 38,627 round-trips verified; the three share content_hash c993ceda; the still build carries tune_resolved 4, the silent ms-ssim fallback of the time, neardup carries 3, the real still-picture tune.
 
 ### self-contained builds
 
@@ -107,9 +107,9 @@ provenance: measured; source: release/v0.3/{neardup,archive}/mtgdataset.nest siz
 
 ## 06 raw-data: the raw spellbook cache the corpus is built from
 
-hypothesis: to be written by the docs pass
-method: to be written by the docs pass
-verdict: to be written by the docs pass
+hypothesis: the raw cache is larger than the benchmark source because it holds derived classes and back faces, not because of orphans or duplicates, and the benchmark corpus is exactly the 38,627 cards with an image_uri.
+method: os.walk over ${MTG_DATA}/images summing st_size with dotfiles excluded, and read-only queries on ${MTG_DATA}/mtg.sqlite; stems on disk joined against cards.image_uri and cards.image_uri_back.
+verdict: confirmed. 82,905 jpegs, 7.201 GB; normal/front holds 38,630 files for 38,627 cards, so 3 true orphans, and the 2,824 files per back class are the back faces referenced by image_uri_back, not orphans; art_crop/front (3.015 GB) is a second class, not derivable from normal without crop coordinates the app does not store; the old report's "6.9 GB" and "3.0 GB" were binary units from du and its "about 2800 orphans per class" was the back faces.
 
 ### directories
 
@@ -144,9 +144,9 @@ provenance: measured; source: os.walk over ${MTG_DATA}/images (st_size sum, dotf
 
 ## 08 lossless: lossless battery over the same 2048 source jpegs
 
-hypothesis: to be written by the docs pass
-method: to be written by the docs pass
-verdict: to be written by the docs pass
+hypothesis: some lossless path compresses jpeg sources beyond the jpeg xl transcode, and in particular a lossless video codec over semantically ordered frames exploits the redundancy between cards that no per-image method sees.
+method: lossless_battery.py over the same 2048 jpegs (211,018,809 bytes): cjxl --lossless_jpeg=1 at effort 9 with djxl sha256 round-trip on 64 items, jpegtran -optimize and -progressive and jpegoptim --strip-all with pixel checks on 32 items, cwebp -lossless, zstd-19 over the jxl-transcode output, ffv1 in source order and in the av1-cluster-crf35 order_permutation, and x264 qp0 yuv444 in cluster order; the effort 7 row is the forge default from experiment 02.
+verdict: refuted. the ceiling for jpeg sources is the byte-reversible transcode, 1.115x at effort 7 and 1.124x at effort 9 (0.8% more for 6.6x the time); pixel-exact re-saves yield under 1% because scryfall's jpegs are already optimized; every pixel-domain path loses, and the ordered lossless video loses by 3.3 to 3.8x against the source, with semantic ordering moving ffv1 by 137 kB, since decoded jpeg pixels do not recompress below the jpeg they came from.
 
 ### generations
 
@@ -171,9 +171,9 @@ provenance: measured; source: benchmark/experiments/08-lossless/battery.json (lo
 
 ## 09 inter-ordering: inter prediction and frame ordering: the similarity lever
 
-hypothesis: to be written by the docs pass
-method: to be written by the docs pass
-verdict: to be written by the docs pass
+hypothesis: the more visual similarity between neighbouring frames, the more inter prediction saves; on same-artwork reprints the saving is large, on unique cards it is small, and the earlier +18% of experiment 02 was an artifact of scene-cut detection and of comparing against an intra stream that had tune=still.
+method: two corpora, all rows av1 crf35 speed 6 yuv420; corpus A is the 2048 unique cards, corpus B is 2787 printings of the same artwork in 1359 illustration_id groups (source 245.7 MB); intra without tune as the base, inter with scene-cut detection off in source order and in semantic order, gop of one keyframe, 8, 16 and 32, grouped by art against shuffled, and low-delay with tune iq; bytes at a fixed crf, no quality column.
+verdict: confirmed on bytes and quantified: inter gop 16 grouped is -29% against intra on corpus B, gop 16 beats a single keyframe (85.0 vs 95.0 MB) while keeping random access within 16 decoded frames; on corpus A inter with scd=0 in semantic order ties tune=still at -18.3%; grouped and shuffled differ by 1.8 MB on corpus B, so part of the gain is the chrome every card shares and not the repeated art; tune iq and inter do not stack, svt-av1 accepts iq only in all-intra or low-delay and low-delay costs +21%.
 
 ### corpus A: 2048 unique cards
 
@@ -204,9 +204,9 @@ provenance: transcribed; source: section 9 of the 2026-09-03 report (docs/archiv
 
 ## 10 capcut: the capcut experiment reproduced: speed-up plus 30 fps export
 
-hypothesis: to be written by the docs pass
-method: to be written by the docs pass
-verdict: to be written by the docs pass
+hypothesis: speeding the card video up 60x in a video editor and exporting at 30 fps halves the bytes, and that halving is a compression path worth building into the forge.
+method: take the still-s6 shard of experiment 02 (70,092,669 bytes, 2048 frames at 1 fps), apply a 60x setpts speed-up and export at 30 fps with the editor's h.264 defaults through ffmpeg, then count bytes and frames of the result.
+verdict: refuted as a compression path. the output is 30.2 MB with 1055 frames, -57% bytes: the 30 fps export samples the accelerated timeline and drops 993 of the 2048 cards (48% of the dataset), and what remains is h.264 re-encoded over already compressed material, a generational loss; the legitimate gain the observation pointed at, redundancy between frames, is what experiment 09 delivers without losing a card.
 
 ### before and after
 
@@ -222,9 +222,9 @@ provenance: transcribed; source: section 10 of the 2026-09-03 report; the export
 
 ## 11 intra-codecs: all-intra codec battery at matched quality (ssim2 mean 61.96 +-2)
 
-hypothesis: to be written by the docs pass
-method: to be written by the docs pass
-verdict: to be written by the docs pass
+hypothesis: at matched quality the av1 stream of the forge is neither the most compact nor the fastest all-intra option, and the gap to the best of each axis is worth knowing before choosing the stills backend.
+method: every encoder consumes the same decoded pixels (pil decode plus letterbox to 488x680, the forge pipeline); quality is ssimulacra2 on the fixed 96-frame sample against the source png; each encoder's quality knob is calibrated until the mean lands at 61.96 with a tolerance of 2, the value of the svt-av1 preset 6 crf 35 tune still baseline, which was reproduced byte-identically first (70,092,669 bytes); wall clock on a 10-core apple silicon machine with the svt ladder pinned to lp=2 like the forge and per-image codecs on 10 single-threaded workers.
+verdict: confirmed on both axes. most compact at matched quality is avif from libaom at speed 6 q48, 61.4 MB, -12.4% against the svt baseline, so libaom still out-compresses svt-av1 all-intra; fastest inside the window is x264 at crf 31, 4.8 s; the best balance is svt preset 6 with lp=8, 17 s for the same bytes and quality as the baseline; vvenc intra costs 100x the x264 time for a mid-table size; cjxl lossy competes only at high fidelity (distance 1 to 2, ssim2 76 to 90), outside this profile's window; svt presets 10 and 12 emit byte-identical streams.
 
 ### encoders
 
@@ -261,9 +261,9 @@ provenance: measured; source: benchmark/experiments/11-intra-codecs/battery.json
 
 ## 13 retrieval-crf: retrieval-only candidates: crf goes up, search does not fall
 
-hypothesis: to be written by the docs pass
-method: to be written by the docs pass
-verdict: to be written by the docs pass
+hypothesis: the dual gate stalls on its visual floors; a .nest that serves retrieval and never display can raise the crf until the vector signal complains, and clip cosine drift is the right signal to watch.
+method: three full-corpus builds with content_hash cb8fdf8f (specs under `specs/`): av1 crf auto over the ladder [40..60] with the visual floors dropped and only the drift floor 0.98 kept, av1 at a fixed crf50 with no gate, and avif q48 speed 8 as the stills candidate; sizes from the files on disk, the gate ladder from the crf40 manifest (48-item stratified sample, 4 buckets by 12); utility with nest_model_bench.py, 100 queries with default_rng(7), ruler "artwork of the card {name}" in the clip space, hits matched by chunk_id, on these three plus the archive and neardup releases.
+verdict: the first half is confirmed and the second refuted. no ladder step passed the drift floor (0.932 at crf40 down to 0.829 at crf60) and the gate fell back to crf40, 0.981 GB; the fixed crf50 build is 0.533 GB, 7.46x on the .nest, and its txt@1 of 0.080 sits inside the noise of the lossless archive's 0.050 and neardup's 0.070, while its drift p10 of 0.942 would have been vetoed by any reasonable floor; so drift measures signal stability and not search utility, and a retrieval-only gate needs a hit@k floor, not a cosine one; avif q48 lands at 1.196 GB, -13.0% against neardup, which is the -12.4% the i-frame battery predicted at matched quality.
 
 ### candidate sizes
 
