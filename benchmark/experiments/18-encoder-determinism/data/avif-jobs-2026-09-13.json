@@ -1,0 +1,32 @@
+{
+ "2": {
+  "bytes": 7552460,
+  "sha256": "bed0339b4887e8d5a35ff4e9bf62fa025ac949a33d30ba3815131bb50d41d3a2",
+  "s": 34.4,
+  "images_differing_vs_j2": 0
+ },
+ "3": {
+  "bytes": 7552460,
+  "sha256": "bed0339b4887e8d5a35ff4e9bf62fa025ac949a33d30ba3815131bb50d41d3a2",
+  "s": 26.9,
+  "images_differing_vs_j2": 0
+ },
+ "4": {
+  "bytes": 7552460,
+  "sha256": "bed0339b4887e8d5a35ff4e9bf62fa025ac949a33d30ba3815131bb50d41d3a2",
+  "s": 23.1,
+  "images_differing_vs_j2": 0
+ },
+ "16": {
+  "bytes": 7552460,
+  "sha256": "bed0339b4887e8d5a35ff4e9bf62fa025ac949a33d30ba3815131bb50d41d3a2",
+  "s": 21.1,
+  "images_differing_vs_j2": 0
+ },
+ "1": {
+  "bytes": 7556192,
+  "sha256": "072dcd007576722ae03d8b07cf257d3df3919ba0d4e22260415a4599130b0425",
+  "s": 43.4,
+  "images_differing_vs_j2": 256
+ }
+}

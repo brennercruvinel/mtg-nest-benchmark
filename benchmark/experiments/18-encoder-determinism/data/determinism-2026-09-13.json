@@ -1,0 +1,108 @@
+{
+ "n": 256,
+ "sample": "sample-2048 ids, every len/n-th, first n",
+ "toolchain": {
+  "ffmpeg": "ffmpeg version 9.0.1 Copyright (c) 2000-2026 the FFmpeg developers",
+  "avifenc": "Version: 1.4.2 (dav1d [dec]:1.5.4, aom [enc/dec]:3.15.0)",
+  "cjxl": "cjxl v0.12.0 0.12.0 [_NEON_BF16_,NEON] {AppleClang 21.0.0.21000099}",
+  "platform": "Darwin arm64"
+ },
+ "results": {
+  "av1": {
+   "runs": {
+    "lp1": {
+     "lp": 1,
+     "bytes": 8872549,
+     "sha256": "f38f31692826ce2d107b9dd159e72469b2ca36d592f37e02a72dea15d4a9ccfa",
+     "s": 13.0
+    },
+    "lp2_a": {
+     "lp": 2,
+     "bytes": 8872549,
+     "sha256": "f38f31692826ce2d107b9dd159e72469b2ca36d592f37e02a72dea15d4a9ccfa",
+     "s": 5.5
+    },
+    "lp2_b": {
+     "lp": 2,
+     "bytes": 8872549,
+     "sha256": "f38f31692826ce2d107b9dd159e72469b2ca36d592f37e02a72dea15d4a9ccfa",
+     "s": 5.7
+    },
+    "lp8": {
+     "lp": 8,
+     "bytes": 8872549,
+     "sha256": "f38f31692826ce2d107b9dd159e72469b2ca36d592f37e02a72dea15d4a9ccfa",
+     "s": 4.3
+    },
+    "lp16": {
+     "lp": 16,
+     "bytes": 8872549,
+     "sha256": "f38f31692826ce2d107b9dd159e72469b2ca36d592f37e02a72dea15d4a9ccfa",
+     "s": 5.4
+    }
+   },
+   "distinct_outputs": 1,
+   "deterministic": true
+  },
+  "avif": {
+   "runs": {
+    "j1": {
+     "jobs": "1",
+     "bytes": 7556192,
+     "sha256": "072dcd007576722ae03d8b07cf257d3df3919ba0d4e22260415a4599130b0425",
+     "s": 37.4
+    },
+    "j8": {
+     "jobs": "8",
+     "bytes": 7552460,
+     "sha256": "bed0339b4887e8d5a35ff4e9bf62fa025ac949a33d30ba3815131bb50d41d3a2",
+     "s": 17.5
+    },
+    "jall_a": {
+     "jobs": "all",
+     "bytes": 7552460,
+     "sha256": "bed0339b4887e8d5a35ff4e9bf62fa025ac949a33d30ba3815131bb50d41d3a2",
+     "s": 25.5
+    },
+    "jall_b": {
+     "jobs": "all",
+     "bytes": 7552460,
+     "sha256": "bed0339b4887e8d5a35ff4e9bf62fa025ac949a33d30ba3815131bb50d41d3a2",
+     "s": 33.9
+    }
+   },
+   "distinct_outputs": 2,
+   "deterministic": false
+  },
+  "jxl": {
+   "runs": {
+    "t1": {
+     "threads": "--num_threads=1",
+     "bytes": 23890626,
+     "sha256": "b0c0dcd95332514b870ddd53f60846a357cf37ce5293f98671ebe4d28922e863",
+     "s": 10.2
+    },
+    "t8": {
+     "threads": "--num_threads=8",
+     "bytes": 23890626,
+     "sha256": "b0c0dcd95332514b870ddd53f60846a357cf37ce5293f98671ebe4d28922e863",
+     "s": 8.1
+    },
+    "default_a": {
+     "threads": "default",
+     "bytes": 23890626,
+     "sha256": "b0c0dcd95332514b870ddd53f60846a357cf37ce5293f98671ebe4d28922e863",
+     "s": 6.8
+    },
+    "default_b": {
+     "threads": "default",
+     "bytes": 23890626,
+     "sha256": "b0c0dcd95332514b870ddd53f60846a357cf37ce5293f98671ebe4d28922e863",
+     "s": 6.1
+    }
+   },
+   "distinct_outputs": 1,
+   "deterministic": true
+  }
+ }
+}
