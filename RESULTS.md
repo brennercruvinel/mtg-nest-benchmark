@@ -437,3 +437,51 @@ verdict: refuted. on the quiet machine the av1 stream was the cheapest read of t
 - a quiet-machine rerun of the after-#138 numbers is pending the end of the five-model build; the before/after pair above was taken under the same load, minutes apart.
 
 provenance: measured; source: benchmark/experiments/17-random-access/data/latency-2026-09-12.json (quiet machine, the scratch script that became measure_latency.py), latency-2026-09-13.json and latency-2026-09-13-fixed.json (benchmark/tools/measure_latency.py, before and after nest pr #138, while the five-model 38k build held the gpu and 15.5 of 16 GB of swap), spawn-floor-2026-09-13.json (50 spawns of each decoder binary with --version); date: 2026-09-13; notes: 200 item ordinals, numpy.random.default_rng(7).choice(38627, 200), the same ordinals for every file. every number is end to end through the forge read path as it exists: blob lookup in the mmap, a child process (ffmpeg, avifdec, djxl), the decode, and the array back in python. the av1 rows pay one export of the whole stream blob to a temp file first (export_once_ms), because ffmpeg needs a path; that is a one-time cost per open, not per card. apple m4, ffmpeg 9.0.1 with svt-av1, libavif 1.4.2 (dav1d 1.5.4), cjxl/djxl 0.12.0.
+
+## 18 encoder-determinism: encoder determinism: do the bytes depend on the worker count
+
+hypothesis: on one toolchain, the three backends write the same bytes whatever the worker count; a release rebuilt on a machine with more or fewer cores hashes the same, and the toolchain record in the manifest is the whole of what reproducibility depends on.
+method: benchmark/tools/encoder_determinism.py on 256 cards (every eighth id of sample-2048), the forge's own parameters per backend; av1 through encode_av1 with lp 1, 2, 2 again, 8 and 16; avifenc -q 48 --speed 6 --yuv 420 with -j 1, 8, all and all again, then an extra sweep at -j 2, 3, 4, 16 and 1 on the same letterboxed pngs; cjxl --lossless_jpeg=1 with --num_threads 1, 8, and the default twice; sha256 over the mp4 (av1) or over the concatenated per-image outputs (avif, jxl), plus a per-image comparison in the avif sweep.
+verdict: refuted for avif, confirmed for the other two. svt-av1 gives one hash across lp 1 to 16 and cjxl gives one hash across thread counts, but libaom writes different bytes with one worker than with two or more: all 256 files differ between -j 1 and -j 2, and -j 2, 3, 4, 8, 16 and all are byte-identical to each other, 3.7 kB apart over the set. avifenc's default is -j all and the forge did not pass -j, so since #137 made avif the stills profile, the stills release hashed differently on a one-core machine than on any other. nest #139 pins -j 8 and records it.
+
+### summary
+
+| backend | worker counts tried | distinct outputs | result |
+| --- | --- | ---: | --- |
+| av1 | lp 1, 2, 2, 8, 16 | 1 | byte-identical |
+| avif | -j 1, 2, 3, 4, 8, 16, all, all | 2 | -j 1 is its own class; 2 and up identical |
+| jxl | 1, 8, default, default | 1 | byte-identical |
+
+### every run
+
+| backend | run | workers | bytes | sha256 (16) | wall s |
+| --- | --- | --- | ---: | --- | ---: |
+| av1, ffmpeg + libsvtav1 all-intra tune still crf 35 preset 6 | lp1 | 1 | 8872549 | f38f31692826ce2d | 13.0 |
+| av1, ffmpeg + libsvtav1 all-intra tune still crf 35 preset 6 | lp2_a | 2 | 8872549 | f38f31692826ce2d | 5.5 |
+| av1, ffmpeg + libsvtav1 all-intra tune still crf 35 preset 6 | lp2_b | 2 | 8872549 | f38f31692826ce2d | 5.7 |
+| av1, ffmpeg + libsvtav1 all-intra tune still crf 35 preset 6 | lp8 | 8 | 8872549 | f38f31692826ce2d | 4.3 |
+| av1, ffmpeg + libsvtav1 all-intra tune still crf 35 preset 6 | lp16 | 16 | 8872549 | f38f31692826ce2d | 5.4 |
+| avif, avifenc -q 48 speed 6 yuv420 | j1 | 1 | 7556192 | 072dcd007576722a | 37.4 |
+| avif, avifenc -q 48 speed 6 yuv420 | j8 | 8 | 7552460 | bed0339b4887e8d5 | 17.5 |
+| avif, avifenc -q 48 speed 6 yuv420 | jall_a | all | 7552460 | bed0339b4887e8d5 | 25.5 |
+| avif, avifenc -q 48 speed 6 yuv420 | jall_b | all | 7552460 | bed0339b4887e8d5 | 33.9 |
+| jxl-transcode, cjxl --lossless_jpeg=1 | t1 | --num_threads=1 | 23890626 | b0c0dcd95332514b | 10.2 |
+| jxl-transcode, cjxl --lossless_jpeg=1 | t8 | --num_threads=8 | 23890626 | b0c0dcd95332514b | 8.1 |
+| jxl-transcode, cjxl --lossless_jpeg=1 | default_a | default | 23890626 | b0c0dcd95332514b | 6.8 |
+| jxl-transcode, cjxl --lossless_jpeg=1 | default_b | default | 23890626 | b0c0dcd95332514b | 6.1 |
+
+### avifenc -j sweep, 256 images
+
+| -j | bytes | sha256 (16) | images differing from -j 2 | wall s |
+| --- | ---: | --- | ---: | ---: |
+| 1 | 7556192 | 072dcd007576722a | 256 | 43.4 |
+| 2 | 7552460 | bed0339b4887e8d5 | 0 | 34.4 |
+| 3 | 7552460 | bed0339b4887e8d5 | 0 | 26.9 |
+| 4 | 7552460 | bed0339b4887e8d5 | 0 | 23.1 |
+| 16 | 7552460 | bed0339b4887e8d5 | 0 | 21.1 |
+
+- avifenc's default is -j all. the forge did not pass -j before nest #139, so the stills profile's bytes depended on the core count of the build machine (one core: a different file).
+
+- cross-version and cross-platform determinism are not measured here: one machine, one toolchain. the manifest's toolchain record (encoder version and params) remains the only guard for those, and a release's file_hash is reproducible only under that record.
+
+provenance: measured; source: benchmark/experiments/18-encoder-determinism/data/determinism-2026-09-13.json (benchmark/tools/encoder_determinism.py --n 256) and avif-jobs-2026-09-13.json (the extra avifenc -j sweep, same 256 letterboxed pngs); date: 2026-09-13; notes: 256 cards, every eighth id of sample-2048. one toolchain: apple m4, macos 26.6, ffmpeg 9.0.1 with svt-av1, libavif 1.4.2 (aom 3.15.0), cjxl 0.12.0. the forge's own parameters per backend (encode_av1 with lp as the knob; avifenc and cjxl called directly with the backend's flags plus the thread flag). sha256 over the mp4 for av1, over the concatenated per-image outputs for avif and jxl. wall seconds were taken while the five-model build held the gpu; they are not a speed benchmark.
