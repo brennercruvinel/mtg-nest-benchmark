@@ -120,7 +120,7 @@ def readme_lines(exp_dir: Path) -> dict[str, str]:
     for line in readme.read_text().splitlines():
         for key in README_KEYS:
             if line.lower().startswith(f"{key}:"):
-                found[key] = line[len(key) + 1:].strip()
+                found[key] = line[len(key) + 1 :].strip()
     return found
 
 

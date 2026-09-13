@@ -37,6 +37,7 @@ import _bench_env as env
 
 env.add_nest_to_path()
 import nest  # noqa: E402
+
 from forge.image_decode import decode_avif, decode_frame, decode_frames_at, decode_jxl  # noqa: E402
 
 CANVAS = (488, 680)
