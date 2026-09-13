@@ -1,0 +1,327 @@
+{
+ "experiment": "16-research-spikes",
+ "title": "three research notes measured: phash prefilter, binary index with int8 rescoring, golden frame per cluster",
+ "provenance": {
+  "status": "measured",
+  "source": "benchmark/experiments/16-research-spikes/data/phash-reprints-2787.json (benchmark/tools/phash_prefilter.py), binary-siglip2-38k.json and binary-clip-38k.json (benchmark/tools/binary_rescoring.py over the forge embed cache of the 38627-card five-model build, siglip2 19eb720f and clip 1d4b9d5c), golden-reprints-2787.json (benchmark/tools/golden_frame.py)",
+  "date": "2026-09-13",
+  "notes": "phash: 64-bit dct hash of the whole card (32x32 grayscale, top-left 8x8, median split), all 3,882,291 pairs of the 2787 reprint printings, ground truth = same illustration_id in the printings table (1563 pairs in 1359 groups). binary: 1000 query rows drawn with default_rng(7) from the 38627 image vectors, truth = exact f32 cosine top-10 with the query excluded, int8 = per-row absmax/127 (the nest encoding-3 scheme), binary = sign bits; recall@10 against the f32 truth. golden: the neardup inter recipe (keyint 16, scd off, crf 35, preset 6) over the same 2787 frames in three orders. cpu only; the five-model build held the gpu throughout, so the encode seconds are not a speed measurement."
+ },
+ "tables": [
+  {
+   "title": "spike a: phash hamming as a prefilter for same-illustration pairs (reprints-2787, 1563 true pairs)",
+   "columns": [
+    {
+     "key": "hamming_le",
+     "label": "hamming <=",
+     "fmt": "int"
+    },
+    {
+     "key": "candidate_pairs",
+     "label": "candidate pairs",
+     "fmt": "int"
+    },
+    {
+     "key": "true_pairs_found",
+     "label": "true pairs found",
+     "fmt": "int"
+    },
+    {
+     "key": "precision",
+     "label": "precision",
+     "fmt": "f3"
+    },
+    {
+     "key": "recall",
+     "label": "recall",
+     "fmt": "f3"
+    },
+    {
+     "key": "pairs_left_for_a_model_pct",
+     "label": "% of all pairs kept",
+     "fmt": "f3"
+    }
+   ],
+   "rows": [
+    {
+     "hamming_le": 0,
+     "candidate_pairs": 37,
+     "true_pairs_found": 37,
+     "precision": 1.0,
+     "recall": 0.0237,
+     "pairs_left_for_a_model_pct": 0.001
+    },
+    {
+     "hamming_le": 2,
+     "candidate_pairs": 124,
+     "true_pairs_found": 124,
+     "precision": 1.0,
+     "recall": 0.0793,
+     "pairs_left_for_a_model_pct": 0.0032
+    },
+    {
+     "hamming_le": 4,
+     "candidate_pairs": 208,
+     "true_pairs_found": 190,
+     "precision": 0.9135,
+     "recall": 0.1216,
+     "pairs_left_for_a_model_pct": 0.0054
+    },
+    {
+     "hamming_le": 6,
+     "candidate_pairs": 470,
+     "true_pairs_found": 253,
+     "precision": 0.5383,
+     "recall": 0.1619,
+     "pairs_left_for_a_model_pct": 0.0121
+    },
+    {
+     "hamming_le": 8,
+     "candidate_pairs": 1655,
+     "true_pairs_found": 315,
+     "precision": 0.1903,
+     "recall": 0.2015,
+     "pairs_left_for_a_model_pct": 0.0426
+    },
+    {
+     "hamming_le": 10,
+     "candidate_pairs": 6649,
+     "true_pairs_found": 348,
+     "precision": 0.0523,
+     "recall": 0.2226,
+     "pairs_left_for_a_model_pct": 0.1713
+    },
+    {
+     "hamming_le": 12,
+     "candidate_pairs": 23071,
+     "true_pairs_found": 376,
+     "precision": 0.0163,
+     "recall": 0.2406,
+     "pairs_left_for_a_model_pct": 0.5943
+    },
+    {
+     "hamming_le": 16,
+     "candidate_pairs": 155931,
+     "true_pairs_found": 403,
+     "precision": 0.0026,
+     "recall": 0.2578,
+     "pairs_left_for_a_model_pct": 4.0165
+    }
+   ],
+   "notes": [
+    "the true pairs sit at a median hamming of 28 bits out of 64 (p90 36, max 44); a random pair of these hashes sits at 32. the hash is over the whole card, and most same-illustration pairs here are a framed printing next to a borderless one, the same painting at a different scale and crop.",
+    "hashing cost 3.72 ms per card on the cpu."
+   ]
+  },
+  {
+   "title": "spike b: binary hamming prefilter with int8 rescoring, recall@10 against exact f32 (38627 image vectors, 1000 queries)",
+   "columns": [
+    {
+     "key": "space",
+     "label": "space"
+    },
+    {
+     "key": "index",
+     "label": "index"
+    },
+    {
+     "key": "bytes_per_row",
+     "label": "bytes per row",
+     "fmt": "int"
+    },
+    {
+     "key": "candidates",
+     "label": "rows scored",
+     "fmt": "int"
+    },
+    {
+     "key": "recall",
+     "label": "recall@10",
+     "fmt": "f3"
+    }
+   ],
+   "rows": [
+    {
+     "space": "siglip2 (768d)",
+     "index": "f32 exact (truth)",
+     "bytes_per_row": 3072,
+     "candidates": 38627,
+     "recall": 1.0
+    },
+    {
+     "space": "siglip2 (768d)",
+     "index": "int8 exact (the nest ladder)",
+     "bytes_per_row": 768,
+     "candidates": 38627,
+     "recall": 0.9738
+    },
+    {
+     "space": "siglip2 (768d)",
+     "index": "binary alone, hamming top-10",
+     "bytes_per_row": 96,
+     "candidates": 10,
+     "recall": 0.4961
+    },
+    {
+     "space": "siglip2 (768d)",
+     "index": "binary top-20, int8 rescoring",
+     "bytes_per_row": 864,
+     "candidates": 20,
+     "recall": 0.6542
+    },
+    {
+     "space": "siglip2 (768d)",
+     "index": "binary top-50, int8 rescoring",
+     "bytes_per_row": 864,
+     "candidates": 50,
+     "recall": 0.811
+    },
+    {
+     "space": "siglip2 (768d)",
+     "index": "binary top-100, int8 rescoring",
+     "bytes_per_row": 864,
+     "candidates": 100,
+     "recall": 0.8873
+    },
+    {
+     "space": "siglip2 (768d)",
+     "index": "binary top-200, int8 rescoring",
+     "bytes_per_row": 864,
+     "candidates": 200,
+     "recall": 0.9328
+    },
+    {
+     "space": "siglip2 (768d)",
+     "index": "binary top-400, int8 rescoring",
+     "bytes_per_row": 864,
+     "candidates": 400,
+     "recall": 0.9565
+    },
+    {
+     "space": "siglip2 (768d)",
+     "index": "binary top-800, int8 rescoring",
+     "bytes_per_row": 864,
+     "candidates": 800,
+     "recall": 0.9672
+    },
+    {
+     "space": "clip-vit-b32 (512d)",
+     "index": "f32 exact (truth)",
+     "bytes_per_row": 2048,
+     "candidates": 38627,
+     "recall": 1.0
+    },
+    {
+     "space": "clip-vit-b32 (512d)",
+     "index": "int8 exact (the nest ladder)",
+     "bytes_per_row": 512,
+     "candidates": 38627,
+     "recall": 0.9233
+    },
+    {
+     "space": "clip-vit-b32 (512d)",
+     "index": "binary alone, hamming top-10",
+     "bytes_per_row": 64,
+     "candidates": 10,
+     "recall": 0.3193
+    },
+    {
+     "space": "clip-vit-b32 (512d)",
+     "index": "binary top-20, int8 rescoring",
+     "bytes_per_row": 576,
+     "candidates": 20,
+     "recall": 0.441
+    },
+    {
+     "space": "clip-vit-b32 (512d)",
+     "index": "binary top-50, int8 rescoring",
+     "bytes_per_row": 576,
+     "candidates": 50,
+     "recall": 0.613
+    },
+    {
+     "space": "clip-vit-b32 (512d)",
+     "index": "binary top-100, int8 rescoring",
+     "bytes_per_row": 576,
+     "candidates": 100,
+     "recall": 0.7278
+    },
+    {
+     "space": "clip-vit-b32 (512d)",
+     "index": "binary top-200, int8 rescoring",
+     "bytes_per_row": 576,
+     "candidates": 200,
+     "recall": 0.8161
+    },
+    {
+     "space": "clip-vit-b32 (512d)",
+     "index": "binary top-400, int8 rescoring",
+     "bytes_per_row": 576,
+     "candidates": 400,
+     "recall": 0.8735
+    },
+    {
+     "space": "clip-vit-b32 (512d)",
+     "index": "binary top-800, int8 rescoring",
+     "bytes_per_row": 576,
+     "candidates": 800,
+     "recall": 0.9021
+    }
+   ],
+   "notes": [
+    "int8 exact is what a nest built with dtype = int8 searches; the loss against f32 is the quantization alone, no index. the binary rows add a 1-bit index in front of it.",
+    "numpy timings are in the raw json and are not comparable to the rust runtime; the candidate count is the number that transfers."
+   ]
+  },
+  {
+   "title": "spike c: frame order inside reprint groups, inter recipe (reprints-2787)",
+   "columns": [
+    {
+     "key": "order",
+     "label": "order"
+    },
+    {
+     "key": "bytes",
+     "label": "bytes",
+     "fmt": "int"
+    },
+    {
+     "key": "pct_vs_sorted",
+     "label": "vs sorted",
+     "fmt": "f2"
+    },
+    {
+     "key": "encode_s",
+     "label": "encode s",
+     "fmt": "f1"
+    }
+   ],
+   "rows": [
+    {
+     "order": "sorted",
+     "bytes": 73205705,
+     "pct_vs_sorted": 0.0,
+     "encode_s": 84.3
+    },
+    {
+     "order": "grouped",
+     "bytes": 71578873,
+     "pct_vs_sorted": -2.22,
+     "encode_s": 82.2
+    },
+    {
+     "order": "golden",
+     "bytes": 71585683,
+     "pct_vs_sorted": -2.21,
+     "encode_s": 86.4
+    }
+   ],
+   "notes": [
+    "source 245724739 bytes of jpeg; sorted = corpus order by id, grouped = illustration groups contiguous in id order, golden = the most phash-central member of each group first."
+   ]
+  }
+ ],
+ "notes": [
+  "av2 and cool-chic stay unmeasured: no encoder on this machine produces a stream the forge can decode today."
+ ]
+}

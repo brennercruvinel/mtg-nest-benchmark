@@ -1,0 +1,47 @@
+{
+ "npz": "19eb720f48aef67b.npz",
+ "key": "image_unique",
+ "n": 38627,
+ "dim": 768,
+ "queries": 1000,
+ "k": 10,
+ "bytes_per_row": {
+  "f32": 3072,
+  "int8": 768,
+  "binary": 96
+ },
+ "exact_f32_ms_per_query": 3.07,
+ "int8_exact": {
+  "recall_at_k": 0.9738,
+  "ms_per_query": 3.29
+ },
+ "binary_alone": {
+  "recall_at_k": 0.4961
+ },
+ "binary_then_int8": {
+  "20": {
+   "recall_at_k": 0.6542,
+   "ms_per_query": 6.23
+  },
+  "50": {
+   "recall_at_k": 0.811,
+   "ms_per_query": 6.72
+  },
+  "100": {
+   "recall_at_k": 0.8873,
+   "ms_per_query": 6.98
+  },
+  "200": {
+   "recall_at_k": 0.9328,
+   "ms_per_query": 4.32
+  },
+  "400": {
+   "recall_at_k": 0.9565,
+   "ms_per_query": 4.71
+  },
+  "800": {
+   "recall_at_k": 0.9672,
+   "ms_per_query": 5.44
+  }
+ }
+}

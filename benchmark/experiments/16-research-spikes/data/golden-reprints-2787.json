@@ -1,0 +1,35 @@
+{
+ "corpus": "reprints-2787",
+ "n": 2787,
+ "groups": 1359,
+ "source_bytes": 245724739,
+ "recipe": {
+  "crf": 35,
+  "preset": 6,
+  "keyint": 16,
+  "tune": "default"
+ },
+ "results": {
+  "sorted": {
+   "bytes": 73205705,
+   "ratio_vs_source": 3.357,
+   "encode_s": 84.3,
+   "keyint": 16,
+   "pct_vs_sorted": 0.0
+  },
+  "grouped": {
+   "bytes": 71578873,
+   "ratio_vs_source": 3.433,
+   "encode_s": 82.2,
+   "keyint": 16,
+   "pct_vs_sorted": -2.22
+  },
+  "golden": {
+   "bytes": 71585683,
+   "ratio_vs_source": 3.433,
+   "encode_s": 86.4,
+   "keyint": 16,
+   "pct_vs_sorted": -2.21
+  }
+ }
+}
