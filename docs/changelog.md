@@ -4,6 +4,20 @@ the format follows keep a changelog. versions are those of the `.nest` releases 
 
 ## [unreleased]
 
+### added, 2026-09-13
+
+- experiment 16: three of the five research notes measured on the cpu. phash prefilter refuted (the reprint pairs are framed vs borderless printings), binary index with int8 rescoring holds (siglip2 top-200 keeps 0.93 of the exact top-10; the int8 ladder itself is at 0.92 on clip), golden frame null. tools `phash_prefilter.py`, `binary_rescoring.py`, `golden_frame.py`.
+- experiment 17: random access per media backend through the forge read path. all-intra av1 is the cheapest read at 27 ms (23 ms is the ffmpeg process start); avif 94 to 32 ms and jxl-transcode 43 to 16 ms after nest #138. tool `measure_latency.py`.
+- experiment 18: encoder determinism per worker count. svt-av1 and cjxl byte-identical; libaom with one worker is its own byte class, fixed upstream in nest #139. tool `encoder_determinism.py`.
+- experiment 19: the four forge recipes at the same ssimulacra2. the still tune is worth 21.6%; avif speed 6 is 5.0% smaller than the av1 still stream and avif speed 8, the nest #137 stills profile, 1.1% larger: the 13% behind #137 compared files 4.6 points apart. tool `crf_for_target.py`, nest issue #143.
+- roadmap: issues #3, #4 and #8 closed with evidence; two new items (a reprint corpus that has reprints in it, an in-process decoder for the read path, nest issue #142).
+
+### upstream, 2026-09-13
+
+- nest #138: `decode_frames_at` bounded to the hit span (it raised on every batched resolve over the real stream), uncompressed avif and ppm jxl intermediates on the read path.
+- nest #139: the avif backend pins `avifenc -j 8` and records it.
+- nest #140 (open): `tune = "still"` as the av1 default. nest #141 (open): compact manifest items under `provenance = "minimal"`.
+
 - license: MIT for the repository, CC BY 4.0 for the `.nest` artifacts on hugging face; the dataset went public on 2026-09-12.
 experiment 15 (text-reading models over crf) landed: hypothesis refuted, no model loses txt@1 at crf50 on 512 cards and the text readers drift least. the 38k five-model build is queued.
 
