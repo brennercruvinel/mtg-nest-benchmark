@@ -395,6 +395,68 @@ verdict: refuted. none of the four models loses txt@1 at crf50 beyond noise: cli
 
 provenance: measured; source: benchmark/runs/15-{lossless,crf35,crf50}/mtgdataset.manifest.json (media.output_bytes, models.<preset>.items_per_s, timings.embed.<preset>) and benchmark/experiments/15-models-over-crf/bench/<variant>.<preset>.json (nest_model_bench.py, 200 queries, default_rng(7), ruler 'artwork of the card {label}', hits matched by chunk_id); date: 2026-09-12; notes: one evenly spaced --sample 512 of the mtgdataset corpus (512 items, chunker mtgdataset/1), the same cards in the three builds; potion text default plus four image spaces per build; embedding.image_input = decoded_media, so drift is source-embed vs the stored vector of the decoded frame; jina and wemm sliced to their validated mrl dim 256; mps fp16 for every torch model. the 200 query items are drawn by default_rng(7) over the 512, so identical across models and media levels. with n=200 one hit is 0.005 of txt@k; a delta needs to clear roughly 0.03 to 0.04 to be more than noise at this size.
 
+## 16 research-spikes: three research notes measured: phash prefilter, binary index with int8 rescoring, golden frame per cluster
+
+hypothesis: (a) a 64-bit phash of the card finds most same-illustration pairs at a small hamming distance, so the neardup ordering can skip the embedding pass and hand the encoder its clusters for the cost of a resize per image; (b) a 1-bit sign index over the image vectors, rescored with the int8 rows on a few hundred candidates, keeps the recall@10 of the int8 ladder at an eighth of its bytes; (c) putting the most central member of each reprint group first gives the inter encoder a better reference and saves bytes against the same group in arbitrary order.
+method: (a) benchmark/tools/phash_prefilter.py on reprints-2787, 64-bit dct phash of the whole card (32x32 grayscale, top-left 8x8 block, median split), hamming over all 3.88 million pairs, ground truth = same illustration_id in the printings table (1563 pairs in 1359 groups), precision and recall per threshold; (b) benchmark/tools/binary_rescoring.py over the forge embed cache of the 38627-card build, siglip2 (768d) and clip (512d) image vectors, 1000 query rows drawn with default_rng(7), truth = exact f32 cosine top-10 with the query excluded, int8 = the nest per-row absmax/127 scheme, binary = sign bits, hamming top-K then int8 rescoring for K in 20 to 800; (c) benchmark/tools/golden_frame.py, the neardup inter recipe (keyint 16, scd off, crf 35, preset 6) over the same 2787 frames in three orders: corpus order, groups contiguous, groups contiguous with the phash-central member first.
+verdict: (a) refuted. the same-illustration pairs sit at a median hamming of 28 bits out of 64, where a random pair sits at 32; at hamming 8 the hash finds 20% of them with 19% precision, and at 16 it finds 26% while keeping 4% of all pairs. the pairs are mostly a framed printing next to a borderless one, the same painting at a different scale and crop, and a whole-card hash cannot see that. (b) confirmed with a cost: on siglip2 the int8 ladder alone is at 0.974 recall@10, binary top-200 with int8 rescoring reaches 0.933 and top-800 0.967 for 96 bytes of index per row instead of 768; on clip the int8 ladder itself only reaches 0.923, and binary top-800 0.902. (c) refuted. groups contiguous saves 2.2% against corpus order and the golden member first changes that by 0.01%; there is nothing for the reference frame to choose between when the group is two printings that differ in scale.
+
+### spike a: phash hamming as a prefilter for same-illustration pairs (reprints-2787, 1563 true pairs)
+
+| hamming <= | candidate pairs | true pairs found | precision | recall | % of all pairs kept |
+| ---: | ---: | ---: | ---: | ---: | ---: |
+| 0 | 37 | 37 | 1.000 | 0.024 | 0.001 |
+| 2 | 124 | 124 | 1.000 | 0.079 | 0.003 |
+| 4 | 208 | 190 | 0.913 | 0.122 | 0.005 |
+| 6 | 470 | 253 | 0.538 | 0.162 | 0.012 |
+| 8 | 1655 | 315 | 0.190 | 0.202 | 0.043 |
+| 10 | 6649 | 348 | 0.052 | 0.223 | 0.171 |
+| 12 | 23071 | 376 | 0.016 | 0.241 | 0.594 |
+| 16 | 155931 | 403 | 0.003 | 0.258 | 4.016 |
+
+- the true pairs sit at a median hamming of 28 bits out of 64 (p90 36, max 44); a random pair of these hashes sits at 32. the hash is over the whole card, and most same-illustration pairs here are a framed printing next to a borderless one, the same painting at a different scale and crop.
+- hashing cost 3.72 ms per card on the cpu.
+
+### spike b: binary hamming prefilter with int8 rescoring, recall@10 against exact f32 (38627 image vectors, 1000 queries)
+
+| space | index | bytes per row | rows scored | recall@10 |
+| --- | --- | ---: | ---: | ---: |
+| siglip2 (768d) | f32 exact (truth) | 3072 | 38627 | 1.000 |
+| siglip2 (768d) | int8 exact (the nest ladder) | 768 | 38627 | 0.974 |
+| siglip2 (768d) | binary alone, hamming top-10 | 96 | 10 | 0.496 |
+| siglip2 (768d) | binary top-20, int8 rescoring | 864 | 20 | 0.654 |
+| siglip2 (768d) | binary top-50, int8 rescoring | 864 | 50 | 0.811 |
+| siglip2 (768d) | binary top-100, int8 rescoring | 864 | 100 | 0.887 |
+| siglip2 (768d) | binary top-200, int8 rescoring | 864 | 200 | 0.933 |
+| siglip2 (768d) | binary top-400, int8 rescoring | 864 | 400 | 0.957 |
+| siglip2 (768d) | binary top-800, int8 rescoring | 864 | 800 | 0.967 |
+| clip-vit-b32 (512d) | f32 exact (truth) | 2048 | 38627 | 1.000 |
+| clip-vit-b32 (512d) | int8 exact (the nest ladder) | 512 | 38627 | 0.923 |
+| clip-vit-b32 (512d) | binary alone, hamming top-10 | 64 | 10 | 0.319 |
+| clip-vit-b32 (512d) | binary top-20, int8 rescoring | 576 | 20 | 0.441 |
+| clip-vit-b32 (512d) | binary top-50, int8 rescoring | 576 | 50 | 0.613 |
+| clip-vit-b32 (512d) | binary top-100, int8 rescoring | 576 | 100 | 0.728 |
+| clip-vit-b32 (512d) | binary top-200, int8 rescoring | 576 | 200 | 0.816 |
+| clip-vit-b32 (512d) | binary top-400, int8 rescoring | 576 | 400 | 0.874 |
+| clip-vit-b32 (512d) | binary top-800, int8 rescoring | 576 | 800 | 0.902 |
+
+- int8 exact is what a nest built with dtype = int8 searches; the loss against f32 is the quantization alone, no index. the binary rows add a 1-bit index in front of it.
+- numpy timings are in the raw json and are not comparable to the rust runtime; the candidate count is the number that transfers.
+
+### spike c: frame order inside reprint groups, inter recipe (reprints-2787)
+
+| order | bytes | vs sorted | encode s |
+| --- | ---: | ---: | ---: |
+| sorted | 73205705 | 0.00 | 84.3 |
+| grouped | 71578873 | -2.22 | 82.2 |
+| golden | 71585683 | -2.21 | 86.4 |
+
+- source 245724739 bytes of jpeg; sorted = corpus order by id, grouped = illustration groups contiguous in id order, golden = the most phash-central member of each group first.
+
+- av2 and cool-chic stay unmeasured: no encoder on this machine produces a stream the forge can decode today.
+
+provenance: measured; source: benchmark/experiments/16-research-spikes/data/phash-reprints-2787.json (benchmark/tools/phash_prefilter.py), binary-siglip2-38k.json and binary-clip-38k.json (benchmark/tools/binary_rescoring.py over the forge embed cache of the 38627-card five-model build, siglip2 19eb720f and clip 1d4b9d5c), golden-reprints-2787.json (benchmark/tools/golden_frame.py); date: 2026-09-13; notes: phash: 64-bit dct hash of the whole card (32x32 grayscale, top-left 8x8, median split), all 3,882,291 pairs of the 2787 reprint printings, ground truth = same illustration_id in the printings table (1563 pairs in 1359 groups). binary: 1000 query rows drawn with default_rng(7) from the 38627 image vectors, truth = exact f32 cosine top-10 with the query excluded, int8 = per-row absmax/127 (the nest encoding-3 scheme), binary = sign bits; recall@10 against the f32 truth. golden: the neardup inter recipe (keyint 16, scd off, crf 35, preset 6) over the same 2787 frames in three orders. cpu only; the five-model build held the gpu throughout, so the encode seconds are not a speed measurement.
+
 ## 17 random-access: random access: what one card costs to read back, per media backend
 
 hypothesis: the single av1 stream pays for its ratio at read time. pulling one card means seeking into a 38627-frame video and decoding to the frame, which should cost more per card than the per-image blobs (avif, jxl) that decode in O(1) with nothing before them; the retrieval and stills profiles are cheap on disk and expensive to open.
