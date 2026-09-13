@@ -162,16 +162,28 @@ def main() -> int:
     else:
         keys_2048 = rule_2048
         from_2048 = "the rule over the full row order (no runs manifest on disk to cross-check)"
-    written.append(doc("sample-2048", None,
-                       f"rows[int(i * {N_FULL} / 2048)] for i in range(2048) over rows sorted by (img_id, oracle_id); "
-                       "this is nest build --sample 2048 (forge corpus_sources.load_rows), evenly spaced, the --seed flag has no effect",
-                       from_2048, keys_2048))
+    written.append(
+        doc(
+            "sample-2048",
+            None,
+            f"rows[int(i * {N_FULL} / 2048)] for i in range(2048) over rows sorted by (img_id, oracle_id); "
+            "this is nest build --sample 2048 (forge corpus_sources.load_rows), evenly spaced, the --seed flag has no effect",
+            from_2048,
+            keys_2048,
+        )
+    )
 
     # sample-1500
-    written.append(doc("sample-1500", None,
-                       f"rows[int(i * {N_FULL} / 1500)] for i in range(1500) over rows sorted by (img_id, oracle_id); "
-                       "this is nest build --sample 1500 (the five-model verification build of 03-image-models)",
-                       full_from, evenly_spaced(full_keys, 1500)))
+    written.append(
+        doc(
+            "sample-1500",
+            None,
+            f"rows[int(i * {N_FULL} / 1500)] for i in range(1500) over rows sorted by (img_id, oracle_id); "
+            "this is nest build --sample 1500 (the five-model verification build of 03-image-models)",
+            full_from,
+            evenly_spaced(full_keys, 1500),
+        )
+    )
 
     # frames-96 and queries-100 need numpy's generator to reproduce the exact draws
     try:
@@ -179,35 +191,63 @@ def main() -> int:
     except ImportError:
         env.die("numpy is required for frames-96 and queries-100 (default_rng(7).choice)")
     idx96 = sorted(np.random.default_rng(7).choice(len(keys_2048), size=96, replace=False).tolist())
-    written.append(doc("frames-96", 7,
-                       "sorted(numpy.random.default_rng(7).choice(2048, size=96, replace=False)) as ordinals of sample-2048, mapped to keys "
-                       "(measure_variants.py SAMPLE_N=96 SEED=7; the i-frame battery reuses the same draw)",
-                       "sample-2048 ordinals", [keys_2048[i] for i in idx96], ordinals=idx96))
+    written.append(
+        doc(
+            "frames-96",
+            7,
+            "sorted(numpy.random.default_rng(7).choice(2048, size=96, replace=False)) as ordinals of sample-2048, mapped to keys "
+            "(measure_variants.py SAMPLE_N=96 SEED=7; the i-frame battery reuses the same draw)",
+            "sample-2048 ordinals",
+            [keys_2048[i] for i in idx96],
+            ordinals=idx96,
+        )
+    )
     idx100 = sorted(np.random.default_rng(7).choice(N_FULL, size=100, replace=False).tolist())
-    written.append(doc("queries-100", 7,
-                       f"sorted(numpy.random.default_rng(7).choice({N_FULL}, size=100, replace=False)) as ordinals of the full corpus, mapped to keys "
-                       "(nest python/tools/nest_model_bench.py pick_items with --queries 100 --seed 7; items filtered to those with image_path, which is all of them)",
-                       full_from, [full_keys[i] for i in idx100], ordinals=idx100))
+    written.append(
+        doc(
+            "queries-100",
+            7,
+            f"sorted(numpy.random.default_rng(7).choice({N_FULL}, size=100, replace=False)) as ordinals of the full corpus, mapped to keys "
+            "(nest python/tools/nest_model_bench.py pick_items with --queries 100 --seed 7; items filtered to those with image_path, which is all of them)",
+            full_from,
+            [full_keys[i] for i in idx100],
+            ordinals=idx100,
+        )
+    )
 
     # gate-48 from the crf40 candidate manifest
     if crf40.is_file():
         m = json.loads(crf40.read_text())
         idx = m["media"]["crf_auto"]["sample_indices"]
         keys = {it["ordinal"]: it["key"] for it in m["items"]}
-        written.append(doc("gate-48", None,
-                           "forge quality_gate.stratified_sample: items bucketed by (resolution, entropy, has_text), per sorted bucket members[::max(1, len // 12)][:12]; deterministic, no rng",
-                           "candidates/v03-retrieval/mtgdataset.manifest.json media.crf_auto.sample_indices mapped through items[].ordinal",
-                           [keys[i] for i in idx], ordinals=list(idx), buckets=m["media"]["crf_auto"]["buckets"]))
+        written.append(
+            doc(
+                "gate-48",
+                None,
+                "forge quality_gate.stratified_sample: items bucketed by (resolution, entropy, has_text), per sorted bucket members[::max(1, len // 12)][:12]; deterministic, no rng",
+                "candidates/v03-retrieval/mtgdataset.manifest.json media.crf_auto.sample_indices mapped through items[].ordinal",
+                [keys[i] for i in idx],
+                ordinals=list(idx),
+                buckets=m["media"]["crf_auto"]["buckets"],
+            )
+        )
     else:
         print("gate-48: skipped, crf40 candidate manifest absent")
 
     # reprints-2787 from sqlite + local files
     if root and (root / "images" / "normal" / "front").is_dir():
         ids, groups = reprints(root)
-        written.append(doc("reprints-2787", None,
-                           "printings WHERE image_uri IS NOT NULL, kept when ${MTG_DATA}/images/normal/front/{s[0]}/{s[1]}/{s}.jpg exists for s = basename_stem(image_uri), "
-                           "then kept when the illustration_id occurs more than once among those; id = stem|oracle_id, sorted",
-                           "${MTG_DATA}/mtg.sqlite printings table plus the local normal/front files", ids, groups=groups))
+        written.append(
+            doc(
+                "reprints-2787",
+                None,
+                "printings WHERE image_uri IS NOT NULL, kept when ${MTG_DATA}/images/normal/front/{s[0]}/{s[1]}/{s}.jpg exists for s = basename_stem(image_uri), "
+                "then kept when the illustration_id occurs more than once among those; id = stem|oracle_id, sorted",
+                "${MTG_DATA}/mtg.sqlite printings table plus the local normal/front files",
+                ids,
+                groups=groups,
+            )
+        )
         print(f"reprints: {len(ids)} printings in {groups} illustration groups")
     else:
         print("reprints-2787: skipped, needs MTG_DATA with images/normal/front")

@@ -95,7 +95,11 @@ def strip_manifest(src: Path, out_dir: Path, dry_run: bool = False) -> tuple[int
     """write out_dir/manifest.json (items[] replaced by a pointer) and items.jsonl.gz."""
     doc = json.loads(src.read_text())
     items = doc.pop("items", [])
-    doc["items"] = {"stripped_to": "items.jsonl.gz", "n": len(items), "fields": sorted({k for it in items[:1] for k in it})}
+    doc["items"] = {
+        "stripped_to": "items.jsonl.gz",
+        "n": len(items),
+        "fields": sorted({k for it in items[:1] for k in it}),
+    }
     if dry_run:
         return len(items), 0
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -140,7 +144,9 @@ def cmd_promote(args) -> int:
     info = inspect(nest)
     print(f"candidate: {env.rel(cand)}")
     print(f"  nest: {nest.name} {nest.stat().st_size} bytes, content_hash {info.get('content_hash')}")
-    print(f"  title: {info.get('manifest', {}).get('title')}; chunker {info.get('manifest', {}).get('chunker_version')}")
+    print(
+        f"  title: {info.get('manifest', {}).get('title')}; chunker {info.get('manifest', {}).get('chunker_version')}"
+    )
     n_items, _ = strip_manifest(manifest, dest, dry_run=True)
     print(f"  manifest: {manifest.name} ({manifest.stat().st_size} bytes, {n_items} items to strip)")
     print(f"destination: {env.rel(dest)}")

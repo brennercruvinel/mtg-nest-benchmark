@@ -109,8 +109,7 @@ def video_row(tag: str, codec_args: list[str], order: list[int] | None, n: int) 
     dst = OUT / f"video-{tag}.mkv"
     t0 = time.time()
     r = subprocess.run(
-        ["ffmpeg", "-y", "-v", "error", "-f", "concat", "-safe", "0", "-r", "1",
-         "-i", str(lst), *codec_args, str(dst)],
+        ["ffmpeg", "-y", "-v", "error", "-f", "concat", "-safe", "0", "-r", "1", "-i", str(lst), *codec_args, str(dst)],
         capture_output=True,
     )
     lst.unlink()
@@ -159,8 +158,10 @@ def main() -> int:
 
     print("[1/8] jxl-transcode -e 9 (byte-reversible)", flush=True)
     r = run_per_file(
-        "jxl-e9", paths,
-        lambda p, d: ["cjxl", str(p), str(d), "--lossless_jpeg=1", "-e", "9"], ".jxl",
+        "jxl-e9",
+        paths,
+        lambda p, d: ["cjxl", str(p), str(d), "--lossless_jpeg=1", "-e", "9"],
+        ".jxl",
     )
     r["class"] = "byte-reversible"
     r["verified"] = f"{verify_jxl_roundtrip('jxl-e9', paths)}/{VERIFY_N} roundtrips sha256-ok"
@@ -168,8 +169,10 @@ def main() -> int:
 
     print("[2/8] jpegtran -optimize (pixel-exact)", flush=True)
     r = run_per_file(
-        "jpegtran-opt", paths,
-        lambda p, d: [jpegtran, "-copy", "none", "-optimize", "-outfile", str(d), str(p)], ".jpg",
+        "jpegtran-opt",
+        paths,
+        lambda p, d: [jpegtran, "-copy", "none", "-optimize", "-outfile", str(d), str(p)],
+        ".jpg",
     )
     r["class"] = "pixel-exact"
     r["verified"] = f"{verify_pixels('jpegtran-opt', paths, '.jpg')}/32 pixel-identical"
@@ -177,9 +180,10 @@ def main() -> int:
 
     print("[3/8] jpegtran -progressive (pixel-exact)", flush=True)
     r = run_per_file(
-        "jpegtran-prog", paths,
-        lambda p, d: [jpegtran, "-copy", "none", "-optimize", "-progressive",
-                      "-outfile", str(d), str(p)], ".jpg",
+        "jpegtran-prog",
+        paths,
+        lambda p, d: [jpegtran, "-copy", "none", "-optimize", "-progressive", "-outfile", str(d), str(p)],
+        ".jpg",
     )
     r["class"] = "pixel-exact"
     r["verified"] = f"{verify_pixels('jpegtran-prog', paths, '.jpg')}/32 pixel-identical"
@@ -207,8 +211,10 @@ def main() -> int:
 
     print("[5/8] webp lossless (pixel-domain)", flush=True)
     r = run_per_file(
-        "webp-lossless", paths,
-        lambda p, d: ["cwebp", "-quiet", "-lossless", "-z", "6", str(p), "-o", str(d)], ".webp",
+        "webp-lossless",
+        paths,
+        lambda p, d: ["cwebp", "-quiet", "-lossless", "-z", "6", str(p), "-o", str(d)],
+        ".webp",
     )
     r["class"] = "pixel-domain (decoded)"
     results["webp-lossless"] = r
@@ -219,11 +225,14 @@ def main() -> int:
     t0 = time.time()
     subprocess.run(
         ["tar", "--zstd", "-cf", str(tar), "-C", str(jd), "."],
-        capture_output=True, env={**os.environ, "ZSTD_CLEVEL": "19"},
+        capture_output=True,
+        env={**os.environ, "ZSTD_CLEVEL": "19"},
     )
     results["jxl-transcode+zstd19"] = {
-        "bytes": tar.stat().st_size, "files": 1,
-        "encode_s": round(time.time() - t0, 1), "class": "byte-reversible",
+        "bytes": tar.stat().st_size,
+        "files": 1,
+        "encode_s": round(time.time() - t0, 1),
+        "class": "byte-reversible",
     }
 
     perm = json.loads(CLUSTER_MANIFEST.read_text())["media"].get("order_permutation")
@@ -243,7 +252,8 @@ def main() -> int:
         **video_row(
             "x264qp0-clusterorder",
             ["-c:v", "libx264", "-qp", "0", "-preset", "medium", "-pix_fmt", "yuv444p"],
-            perm, n,
+            perm,
+            n,
         ),
         "class": "pixel-domain (decoded, yuv444)",
     }

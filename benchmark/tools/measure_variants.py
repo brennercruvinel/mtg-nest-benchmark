@@ -39,10 +39,21 @@ EXP_BASELINES = env.EXPERIMENTS / "01-baselines"
 MEASUREMENTS = EXP_VARIANTS / "measurements.json"
 # report order: ruler first, then lossless, then the av1 knob isolation, then image codecs and single-file builds
 ORDER = [
-    "control", "jxl-transcode", "jxl-lossless", "av1-v02-crf35-s8", "av1-still-s6-crf35",
-    "av1-fps30-intra-crf35", "av1-inter-crf35", "av1-fps30-inter-crf35", "av1-cluster-crf35",
-    "av1-auto-dualgate", "avif-crf35", "selfcontained-still-s6", "selfcontained-neardup",
-    "selfcontained-jxl-transcode", "selfcontained-avif",
+    "control",
+    "jxl-transcode",
+    "jxl-lossless",
+    "av1-v02-crf35-s8",
+    "av1-still-s6-crf35",
+    "av1-fps30-intra-crf35",
+    "av1-inter-crf35",
+    "av1-fps30-inter-crf35",
+    "av1-cluster-crf35",
+    "av1-auto-dualgate",
+    "avif-crf35",
+    "selfcontained-still-s6",
+    "selfcontained-neardup",
+    "selfcontained-jxl-transcode",
+    "selfcontained-avif",
 ]
 
 
@@ -215,7 +226,9 @@ def results_from_measurements(m: dict) -> tuple[dict, dict]:
                     {"baseline": "tar", "bytes": base["tar_bytes"]},
                     {"baseline": "tar + zstd-19", "bytes": base["tar_zstd19_bytes"]},
                 ],
-                "notes": [f"{base['n_files']} files. generic archivers do not compress jpeg; every gain below comes from an image or video codec."],
+                "notes": [
+                    f"{base['n_files']} files. generic archivers do not compress jpeg; every gain below comes from an image or video codec."
+                ],
             }
         ],
     }
@@ -294,7 +307,9 @@ def write_json(path: Path, doc: dict) -> None:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--no-baselines", action="store_true", help="keep the previous _baselines entry instead of re-running tar/zstd")
+    ap.add_argument(
+        "--no-baselines", action="store_true", help="keep the previous _baselines entry instead of re-running tar/zstd"
+    )
     ap.add_argument("--dry-run", action="store_true", help="list the runs and what would happen, write nothing")
     args = ap.parse_args()
     previous = json.loads(MEASUREMENTS.read_text()) if MEASUREMENTS.is_file() else {}
