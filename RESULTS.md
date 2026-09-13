@@ -547,3 +547,71 @@ verdict: refuted for avif, confirmed for the other two. svt-av1 gives one hash a
 - cross-version and cross-platform determinism are not measured here: one machine, one toolchain. the manifest's toolchain record (encoder version and params) remains the only guard for those, and a release's file_hash is reproducible only under that record.
 
 provenance: measured; source: benchmark/experiments/18-encoder-determinism/data/determinism-2026-09-13.json (benchmark/tools/encoder_determinism.py --n 256) and avif-jobs-2026-09-13.json (the extra avifenc -j sweep, same 256 letterboxed pngs); date: 2026-09-13; notes: 256 cards, every eighth id of sample-2048. one toolchain: apple m4, macos 26.6, ffmpeg 9.0.1 with svt-av1, libavif 1.4.2 (aom 3.15.0), cjxl 0.12.0. the forge's own parameters per backend (encode_av1 with lp as the knob; avifenc and cjxl called directly with the backend's flags plus the thread flag). sha256 over the mp4 for av1, over the concatenated per-image outputs for avif and jxl. wall seconds were taken while the five-model build held the gpu; they are not a speed benchmark.
+
+## 19 matched-quality: the quality knob for a target ssimulacra2: the four forge recipes at the same fidelity
+
+hypothesis: at the same mean ssimulacra2 the ranking of experiment 11 holds for the forge's own recipes: avif from libaom is 12 to 13% smaller than the svt-av1 all-intra stream with the still tune, and the still tune is worth about 10% of bytes against svt's default tune at equal quality.
+method: benchmark/tools/crf_for_target.py --target 61.96, the calibration point of experiment 11; for each of av1 still speed 6, av1 default tune speed 6, avif speed 6 and avif speed 8, bisect the quality knob until two adjacent knobs bracket the target on frames-96 (mean ssimulacra2 of the decoded frame against the letterboxed source png), then encode the whole sample-2048 at both brackets and interpolate the bytes at the target; the production avif recipe (q48 speed 8) measured once more on the same sample; the forge's encoders and letterbox throughout, apple m4, svt-av1 4.2.0, aom 3.15.0.
+verdict: half refuted. the still tune holds and then some: svt's default tune needs 21.6% more bytes for the same fidelity (82.4 MB against 67.8 MB on the 2048 cards). avif does not hold as measured: at matched quality libaom speed 6 is 5.0% smaller than the av1 still stream, not 12.4%, and libaom speed 8, the recipe nest #137 made the stills profile, is 1.1% larger. the 13% on the full corpus compared an avif at ssimulacra2 58.6 with an av1 stream at 63.2; the two files were 4.6 points apart on the ruler that was supposed to match them. experiment 11's own baseline was the tune-4 fallback its battery found, 70.09 MB at 61.96; the fixed forge encodes tune 3, byte-identical to the battery's tune-3 row two weeks later, and sits at 63.22 for 71.05 MB.
+
+### bytes at ssimulacra2 mean 61.96, sample-2048
+
+| backend | knob at or above | ssim2 | bytes | knob below | ssim2 | bytes | bytes at target | vs av1 still |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| av1 all-intra, tune still, preset 6 (the stills-av1 and retrieval recipe) | 35 | 63.22 | 71048645 | 36 | 61.48 | 66503378 | 67757245 | 0.0 |
+| av1 all-intra, svt default tune, preset 6 | 30 | 62.24 | 83062805 | 31 | 60.06 | 78085563 | 82423526 | 21.6 |
+| avif, libaom speed 6 | 49 | 62.02 | 64530334 | 48 | 60.20 | 60529995 | 64398455 | -5.0 |
+| avif, libaom speed 8 (the nest #137 stills profile) | 50 | 62.23 | 69096173 | 49 | 60.51 | 65194156 | 68483647 | 1.1 |
+
+- av1 knob = crf (higher is smaller), avif knob = avifenc -q (higher is better). the interpolation is linear in ssim2 between the two brackets.
+
+### the recipes in production, placed on the same ruler
+
+| recipe | ssim2 mean | vs target | bytes at that knob | bytes the backend needs at the target |
+| --- | ---: | ---: | ---: | ---: |
+| av1 still s6 crf35, tune_resolved 3 (stills release, 2026-09-12) | 63.22 | 1.26 | 71048645 | 67757245 |
+| av1 still s6 crf35 as experiment 11 measured it (tune fell back to 4) | 61.96 | 0.00 | 70092669 | 67757245 |
+| avif q48 speed 8 (v03-avif-q48 candidate, nest #137 stills profile) | 58.63 | -3.33 | 61335914 | 68483647 |
+| avif q48 speed 6 (experiment 11's calibrated avif row, aom 3.14.1 then) | 60.72 | -1.24 | 61434107 | 64398455 |
+| avif q48 speed 6, aom 3.15.0 today | 60.20 | -1.76 | 60529995 | 64398455 |
+
+- the 13% of nest #137 compares the third row (58.63) against the first (63.22): 4.6 ssimulacra2 points apart. on the same ruler avif speed 8 needs 68.5 MB and the av1 still stream 67.8 MB.
+- experiment 11's baseline was tune 4 (the silent fallback the battery itself found); the fixed forge encodes tune 3, byte-identical to the battery's svt-p6-crf35-tune3 row (71048645 bytes), two weeks apart on the same svt-av1 4.2.0.
+- aom 3.14.1 to 3.15.0 at the same knob: 61434107 to 60529995 bytes and 60.72 to 60.20 ssim2. a minor version moved the bytes by 1.5%.
+
+### every probe
+
+| backend | knob | ssim2 mean (96 frames) |
+| --- | ---: | ---: |
+| av1-still-s6 | 20 | 80.38 |
+| av1-still-s6 | 30 | 70.96 |
+| av1-still-s6 | 35 | 63.22 |
+| av1-still-s6 | 36 | 61.48 |
+| av1-still-s6 | 38 | 57.88 |
+| av1-still-s6 | 41 | 50.78 |
+| av1-still-s6 | 63 | -38.76 |
+| av1-default-s6 | 20 | 75.44 |
+| av1-default-s6 | 30 | 62.24 |
+| av1-default-s6 | 31 | 60.06 |
+| av1-default-s6 | 32 | 57.63 |
+| av1-default-s6 | 35 | 51.19 |
+| av1-default-s6 | 41 | 36.00 |
+| av1-default-s6 | 63 | -60.65 |
+| avif-s6 | 20 | 22.70 |
+| avif-s6 | 37 | 46.99 |
+| avif-s6 | 46 | 58.31 |
+| avif-s6 | 48 | 60.20 |
+| avif-s6 | 49 | 62.02 |
+| avif-s6 | 50 | 63.64 |
+| avif-s6 | 55 | 68.36 |
+| avif-s6 | 90 | 88.74 |
+| avif-s8 | 20 | 17.36 |
+| avif-s8 | 37 | 44.37 |
+| avif-s8 | 46 | 56.54 |
+| avif-s8 | 48 | 58.63 |
+| avif-s8 | 49 | 60.51 |
+| avif-s8 | 50 | 62.23 |
+| avif-s8 | 55 | 67.21 |
+| avif-s8 | 90 | 88.42 |
+
+provenance: measured; source: benchmark/experiments/19-matched-quality/data/target-61.96-2026-09-13.json (benchmark/tools/crf_for_target.py --target 61.96), avif-s8-q48-2026-09-13.json (the production avif recipe on the same sample); experiment 11's battery.json for the 2026-08-31 rows; date: 2026-09-13; notes: quality = mean ssimulacra2 over frames-96 (the 96 ordinals of sample-2048 that measure_variants.py draws with default_rng(7)), decoded frame against the letterboxed source png, the forge's own encoders and letterbox (488x680, yuv420). bytes = the full sample-2048 encoded at the two knobs that bracket the target, and linear interpolation between them at the target. the target 61.96 is experiment 11's calibration point. apple m4, ffmpeg 9.0.1 with svt-av1 4.2.0, libavif 1.4.2 with aom 3.15.0 (experiment 11 ran aom 3.14.1). encode seconds were taken while the five-model build held the gpu and are not a speed measurement.

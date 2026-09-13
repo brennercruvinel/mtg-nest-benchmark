@@ -1,0 +1,220 @@
+{
+ "target_ssim2_mean": 61.96,
+ "quality_sample": "frames-96 (96 ordinals of sample-2048, default_rng(7))",
+ "bytes_sample": "sample-2048",
+ "source_bytes_2048": 211018809,
+ "results": {
+  "av1-still-s6": {
+   "probes": [
+    {
+     "knob": 20,
+     "ssim2": 80.38
+    },
+    {
+     "knob": 30,
+     "ssim2": 70.96
+    },
+    {
+     "knob": 35,
+     "ssim2": 63.22,
+     "bytes_2048": 71048645,
+     "encode_s_2048": 61.0
+    },
+    {
+     "knob": 36,
+     "ssim2": 61.48,
+     "bytes_2048": 66503378,
+     "encode_s_2048": 64.0
+    },
+    {
+     "knob": 38,
+     "ssim2": 57.88
+    },
+    {
+     "knob": 41,
+     "ssim2": 50.78
+    },
+    {
+     "knob": 63,
+     "ssim2": -38.76
+    }
+   ],
+   "bracket": [
+    {
+     "knob": 35,
+     "ssim2": 63.22,
+     "bytes_2048": 71048645,
+     "encode_s_2048": 61.0
+    },
+    {
+     "knob": 36,
+     "ssim2": 61.48,
+     "bytes_2048": 66503378,
+     "encode_s_2048": 64.0
+    }
+   ],
+   "bytes_at_target_interpolated": 67757245
+  },
+  "av1-default-s6": {
+   "probes": [
+    {
+     "knob": 20,
+     "ssim2": 75.44
+    },
+    {
+     "knob": 30,
+     "ssim2": 62.24,
+     "bytes_2048": 83062805,
+     "encode_s_2048": 69.4
+    },
+    {
+     "knob": 31,
+     "ssim2": 60.06,
+     "bytes_2048": 78085563,
+     "encode_s_2048": 66.9
+    },
+    {
+     "knob": 32,
+     "ssim2": 57.63
+    },
+    {
+     "knob": 35,
+     "ssim2": 51.19
+    },
+    {
+     "knob": 41,
+     "ssim2": 36.0
+    },
+    {
+     "knob": 63,
+     "ssim2": -60.65
+    }
+   ],
+   "bracket": [
+    {
+     "knob": 30,
+     "ssim2": 62.24,
+     "bytes_2048": 83062805,
+     "encode_s_2048": 69.4
+    },
+    {
+     "knob": 31,
+     "ssim2": 60.06,
+     "bytes_2048": 78085563,
+     "encode_s_2048": 66.9
+    }
+   ],
+   "bytes_at_target_interpolated": 82423526
+  },
+  "avif-s6": {
+   "probes": [
+    {
+     "knob": 20,
+     "ssim2": 22.7
+    },
+    {
+     "knob": 37,
+     "ssim2": 46.99
+    },
+    {
+     "knob": 46,
+     "ssim2": 58.31
+    },
+    {
+     "knob": 48,
+     "ssim2": 60.2,
+     "bytes_2048": 60529995,
+     "encode_s_2048": 132.1
+    },
+    {
+     "knob": 49,
+     "ssim2": 62.02,
+     "bytes_2048": 64530334,
+     "encode_s_2048": 139.6
+    },
+    {
+     "knob": 50,
+     "ssim2": 63.64
+    },
+    {
+     "knob": 55,
+     "ssim2": 68.36
+    },
+    {
+     "knob": 90,
+     "ssim2": 88.74
+    }
+   ],
+   "bracket": [
+    {
+     "knob": 49,
+     "ssim2": 62.02,
+     "bytes_2048": 64530334,
+     "encode_s_2048": 139.6
+    },
+    {
+     "knob": 48,
+     "ssim2": 60.2,
+     "bytes_2048": 60529995,
+     "encode_s_2048": 132.1
+    }
+   ],
+   "bytes_at_target_interpolated": 64398455
+  },
+  "avif-s8": {
+   "probes": [
+    {
+     "knob": 20,
+     "ssim2": 17.36
+    },
+    {
+     "knob": 37,
+     "ssim2": 44.37
+    },
+    {
+     "knob": 46,
+     "ssim2": 56.54
+    },
+    {
+     "knob": 48,
+     "ssim2": 58.63
+    },
+    {
+     "knob": 49,
+     "ssim2": 60.51,
+     "bytes_2048": 65194156,
+     "encode_s_2048": 69.0
+    },
+    {
+     "knob": 50,
+     "ssim2": 62.23,
+     "bytes_2048": 69096173,
+     "encode_s_2048": 71.9
+    },
+    {
+     "knob": 55,
+     "ssim2": 67.21
+    },
+    {
+     "knob": 90,
+     "ssim2": 88.42
+    }
+   ],
+   "bracket": [
+    {
+     "knob": 50,
+     "ssim2": 62.23,
+     "bytes_2048": 69096173,
+     "encode_s_2048": 71.9
+    },
+    {
+     "knob": 49,
+     "ssim2": 60.51,
+     "bytes_2048": 65194156,
+     "encode_s_2048": 69.0
+    }
+   ],
+   "bytes_at_target_interpolated": 68483647
+  }
+ }
+}
