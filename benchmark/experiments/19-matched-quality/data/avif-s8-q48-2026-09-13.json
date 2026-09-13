@@ -1,0 +1,8 @@
+{
+ "backend": "avif-s8",
+ "knob": 48,
+ "ssim2": 58.63,
+ "bytes_2048": 61335914,
+ "encode_s_2048": 64.9,
+ "note": "the recipe of the v03-avif-q48 candidate and of the nest #137 stills profile"
+}

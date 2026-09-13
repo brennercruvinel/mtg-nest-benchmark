@@ -1,0 +1,359 @@
+{
+ "experiment": "19-matched-quality",
+ "title": "the quality knob for a target ssimulacra2: the four forge recipes at the same fidelity",
+ "provenance": {
+  "status": "measured",
+  "source": "benchmark/experiments/19-matched-quality/data/target-61.96-2026-09-13.json (benchmark/tools/crf_for_target.py --target 61.96), avif-s8-q48-2026-09-13.json (the production avif recipe on the same sample); experiment 11's battery.json for the 2026-08-31 rows",
+  "date": "2026-09-13",
+  "notes": "quality = mean ssimulacra2 over frames-96 (the 96 ordinals of sample-2048 that measure_variants.py draws with default_rng(7)), decoded frame against the letterboxed source png, the forge's own encoders and letterbox (488x680, yuv420). bytes = the full sample-2048 encoded at the two knobs that bracket the target, and linear interpolation between them at the target. the target 61.96 is experiment 11's calibration point. apple m4, ffmpeg 9.0.1 with svt-av1 4.2.0, libavif 1.4.2 with aom 3.15.0 (experiment 11 ran aom 3.14.1). encode seconds were taken while the five-model build held the gpu and are not a speed measurement."
+ },
+ "constants": {
+  "source_bytes": 211018809
+ },
+ "tables": [
+  {
+   "title": "bytes at ssimulacra2 mean 61.96, sample-2048",
+   "columns": [
+    {
+     "key": "backend",
+     "label": "backend"
+    },
+    {
+     "key": "knob_above",
+     "label": "knob at or above",
+     "fmt": "int"
+    },
+    {
+     "key": "ssim2_above",
+     "label": "ssim2",
+     "fmt": "f2"
+    },
+    {
+     "key": "bytes_above",
+     "label": "bytes",
+     "fmt": "int"
+    },
+    {
+     "key": "knob_below",
+     "label": "knob below",
+     "fmt": "int"
+    },
+    {
+     "key": "ssim2_below",
+     "label": "ssim2",
+     "fmt": "f2"
+    },
+    {
+     "key": "bytes_below",
+     "label": "bytes",
+     "fmt": "int"
+    },
+    {
+     "key": "bytes_at_target",
+     "label": "bytes at target",
+     "fmt": "int"
+    },
+    {
+     "key": "vs_av1_still_pct",
+     "label": "vs av1 still",
+     "fmt": "f1"
+    }
+   ],
+   "rows": [
+    {
+     "backend": "av1 all-intra, tune still, preset 6 (the stills-av1 and retrieval recipe)",
+     "knob_above": 35,
+     "ssim2_above": 63.22,
+     "bytes_above": 71048645,
+     "knob_below": 36,
+     "ssim2_below": 61.48,
+     "bytes_below": 66503378,
+     "bytes_at_target": 67757245,
+     "vs_av1_still_pct": 0.0,
+     "encode_s": 61.0
+    },
+    {
+     "backend": "av1 all-intra, svt default tune, preset 6",
+     "knob_above": 30,
+     "ssim2_above": 62.24,
+     "bytes_above": 83062805,
+     "knob_below": 31,
+     "ssim2_below": 60.06,
+     "bytes_below": 78085563,
+     "bytes_at_target": 82423526,
+     "vs_av1_still_pct": 21.6,
+     "encode_s": 69.4
+    },
+    {
+     "backend": "avif, libaom speed 6",
+     "knob_above": 49,
+     "ssim2_above": 62.02,
+     "bytes_above": 64530334,
+     "knob_below": 48,
+     "ssim2_below": 60.2,
+     "bytes_below": 60529995,
+     "bytes_at_target": 64398455,
+     "vs_av1_still_pct": -5.0,
+     "encode_s": 139.6
+    },
+    {
+     "backend": "avif, libaom speed 8 (the nest #137 stills profile)",
+     "knob_above": 50,
+     "ssim2_above": 62.23,
+     "bytes_above": 69096173,
+     "knob_below": 49,
+     "ssim2_below": 60.51,
+     "bytes_below": 65194156,
+     "bytes_at_target": 68483647,
+     "vs_av1_still_pct": 1.1,
+     "encode_s": 71.9
+    }
+   ],
+   "notes": [
+    "av1 knob = crf (higher is smaller), avif knob = avifenc -q (higher is better). the interpolation is linear in ssim2 between the two brackets."
+   ]
+  },
+  {
+   "title": "the recipes in production, placed on the same ruler",
+   "columns": [
+    {
+     "key": "recipe",
+     "label": "recipe"
+    },
+    {
+     "key": "ssim2",
+     "label": "ssim2 mean",
+     "fmt": "f2"
+    },
+    {
+     "key": "quality_delta",
+     "label": "vs target",
+     "fmt": "f2"
+    },
+    {
+     "key": "bytes",
+     "label": "bytes at that knob",
+     "fmt": "int"
+    },
+    {
+     "key": "at_target_bytes",
+     "label": "bytes the backend needs at the target",
+     "fmt": "int"
+    }
+   ],
+   "rows": [
+    {
+     "recipe": "av1 still s6 crf35, tune_resolved 3 (stills release, 2026-09-12)",
+     "ssim2": 63.22,
+     "bytes": 71048645,
+     "at_target_bytes": 67757245,
+     "quality_delta": 1.26
+    },
+    {
+     "recipe": "av1 still s6 crf35 as experiment 11 measured it (tune fell back to 4)",
+     "ssim2": 61.96,
+     "bytes": 70092669,
+     "at_target_bytes": 67757245,
+     "quality_delta": 0.0
+    },
+    {
+     "recipe": "avif q48 speed 8 (v03-avif-q48 candidate, nest #137 stills profile)",
+     "ssim2": 58.63,
+     "bytes": 61335914,
+     "at_target_bytes": 68483647,
+     "quality_delta": -3.33
+    },
+    {
+     "recipe": "avif q48 speed 6 (experiment 11's calibrated avif row, aom 3.14.1 then)",
+     "ssim2": 60.72,
+     "bytes": 61434107,
+     "at_target_bytes": 64398455,
+     "quality_delta": -1.24
+    },
+    {
+     "recipe": "avif q48 speed 6, aom 3.15.0 today",
+     "ssim2": 60.2,
+     "bytes": 60529995,
+     "at_target_bytes": 64398455,
+     "quality_delta": -1.76
+    }
+   ],
+   "notes": [
+    "the 13% of nest #137 compares the third row (58.63) against the first (63.22): 4.6 ssimulacra2 points apart. on the same ruler avif speed 8 needs 68.5 MB and the av1 still stream 67.8 MB.",
+    "experiment 11's baseline was tune 4 (the silent fallback the battery itself found); the fixed forge encodes tune 3, byte-identical to the battery's svt-p6-crf35-tune3 row (71048645 bytes), two weeks apart on the same svt-av1 4.2.0.",
+    "aom 3.14.1 to 3.15.0 at the same knob: 61434107 to 60529995 bytes and 60.72 to 60.20 ssim2. a minor version moved the bytes by 1.5%."
+   ]
+  },
+  {
+   "title": "every probe",
+   "columns": [
+    {
+     "key": "backend",
+     "label": "backend"
+    },
+    {
+     "key": "knob",
+     "label": "knob",
+     "fmt": "int"
+    },
+    {
+     "key": "ssim2",
+     "label": "ssim2 mean (96 frames)",
+     "fmt": "f2"
+    }
+   ],
+   "rows": [
+    {
+     "backend": "av1-still-s6",
+     "knob": 20,
+     "ssim2": 80.38
+    },
+    {
+     "backend": "av1-still-s6",
+     "knob": 30,
+     "ssim2": 70.96
+    },
+    {
+     "backend": "av1-still-s6",
+     "knob": 35,
+     "ssim2": 63.22
+    },
+    {
+     "backend": "av1-still-s6",
+     "knob": 36,
+     "ssim2": 61.48
+    },
+    {
+     "backend": "av1-still-s6",
+     "knob": 38,
+     "ssim2": 57.88
+    },
+    {
+     "backend": "av1-still-s6",
+     "knob": 41,
+     "ssim2": 50.78
+    },
+    {
+     "backend": "av1-still-s6",
+     "knob": 63,
+     "ssim2": -38.76
+    },
+    {
+     "backend": "av1-default-s6",
+     "knob": 20,
+     "ssim2": 75.44
+    },
+    {
+     "backend": "av1-default-s6",
+     "knob": 30,
+     "ssim2": 62.24
+    },
+    {
+     "backend": "av1-default-s6",
+     "knob": 31,
+     "ssim2": 60.06
+    },
+    {
+     "backend": "av1-default-s6",
+     "knob": 32,
+     "ssim2": 57.63
+    },
+    {
+     "backend": "av1-default-s6",
+     "knob": 35,
+     "ssim2": 51.19
+    },
+    {
+     "backend": "av1-default-s6",
+     "knob": 41,
+     "ssim2": 36.0
+    },
+    {
+     "backend": "av1-default-s6",
+     "knob": 63,
+     "ssim2": -60.65
+    },
+    {
+     "backend": "avif-s6",
+     "knob": 20,
+     "ssim2": 22.7
+    },
+    {
+     "backend": "avif-s6",
+     "knob": 37,
+     "ssim2": 46.99
+    },
+    {
+     "backend": "avif-s6",
+     "knob": 46,
+     "ssim2": 58.31
+    },
+    {
+     "backend": "avif-s6",
+     "knob": 48,
+     "ssim2": 60.2
+    },
+    {
+     "backend": "avif-s6",
+     "knob": 49,
+     "ssim2": 62.02
+    },
+    {
+     "backend": "avif-s6",
+     "knob": 50,
+     "ssim2": 63.64
+    },
+    {
+     "backend": "avif-s6",
+     "knob": 55,
+     "ssim2": 68.36
+    },
+    {
+     "backend": "avif-s6",
+     "knob": 90,
+     "ssim2": 88.74
+    },
+    {
+     "backend": "avif-s8",
+     "knob": 20,
+     "ssim2": 17.36
+    },
+    {
+     "backend": "avif-s8",
+     "knob": 37,
+     "ssim2": 44.37
+    },
+    {
+     "backend": "avif-s8",
+     "knob": 46,
+     "ssim2": 56.54
+    },
+    {
+     "backend": "avif-s8",
+     "knob": 48,
+     "ssim2": 58.63
+    },
+    {
+     "backend": "avif-s8",
+     "knob": 49,
+     "ssim2": 60.51
+    },
+    {
+     "backend": "avif-s8",
+     "knob": 50,
+     "ssim2": 62.23
+    },
+    {
+     "backend": "avif-s8",
+     "knob": 55,
+     "ssim2": 67.21
+    },
+    {
+     "backend": "avif-s8",
+     "knob": 90,
+     "ssim2": 88.42
+    }
+   ]
+  }
+ ]
+}
