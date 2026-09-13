@@ -394,3 +394,46 @@ verdict: refuted. none of the four models loses txt@1 at crf50 beyond noise: cli
 - z = delta / sqrt(p_lossy(1-p_lossy)/200 + p_lossless(1-p_lossless)/200), the pooled binomial se of the difference; |z| below 2 is inside noise.
 
 provenance: measured; source: benchmark/runs/15-{lossless,crf35,crf50}/mtgdataset.manifest.json (media.output_bytes, models.<preset>.items_per_s, timings.embed.<preset>) and benchmark/experiments/15-models-over-crf/bench/<variant>.<preset>.json (nest_model_bench.py, 200 queries, default_rng(7), ruler 'artwork of the card {label}', hits matched by chunk_id); date: 2026-09-12; notes: one evenly spaced --sample 512 of the mtgdataset corpus (512 items, chunker mtgdataset/1), the same cards in the three builds; potion text default plus four image spaces per build; embedding.image_input = decoded_media, so drift is source-embed vs the stored vector of the decoded frame; jina and wemm sliced to their validated mrl dim 256; mps fp16 for every torch model. the 200 query items are drawn by default_rng(7) over the 512, so identical across models and media levels. with n=200 one hit is 0.005 of txt@k; a delta needs to clear roughly 0.03 to 0.04 to be more than noise at this size.
+
+## 17 random-access: random access: what one card costs to read back, per media backend
+
+hypothesis: the single av1 stream pays for its ratio at read time. pulling one card means seeking into a 38627-frame video and decoding to the frame, which should cost more per card than the per-image blobs (avif, jxl) that decode in O(1) with nothing before them; the retrieval and stills profiles are cheap on disk and expensive to open.
+method: benchmark/tools/measure_latency.py over the four candidate files on disk, 200 item ordinals drawn once with default_rng(7) and reused for every file; per card, the forge read path as it exists in the nest checkout: blob lookup in the mmap, the decoder as a child process (ffmpeg with -ss for the stream, avifdec and djxl for the blobs), the rgb array back in python; p50/p90/p99 over the 200 cards; the av1 stream also through decode_frames_at with 10 hits per ffmpeg; the process-spawn floor as 50 runs of each binary with --version; one run on the quiet machine on 2026-09-12 and one pair (before and after nest pr #138) on 2026-09-13 with the five-model build holding the gpu.
+verdict: refuted. on the quiet machine the av1 stream was the cheapest read of the four, 27 ms p50 at crf50 and 29 ms at crf35, against 36 ms for the jxl blob and 70 ms for avif; with keyint=1 every frame is a keyframe, so the seek lands on the card and there is no walk, and 23 of those 27 ms are ffmpeg starting up. the per-image backends were slow for a reason that had nothing to do with the codec: the read path asked the decoder for a png and paid libpng's deflate on every card (127 of avifdec's 145 ms). nest #138 writes the intermediate uncompressed (avif) or as ppm (jxl) and the same cards under the same load went 94 to 32 ms (avif) and 43 to 16 ms (jxl-transcode). the batched stream path was worse than broken: it raised on every call whose last hit was not the last frame (fixed in #138), and once it returns it costs 239 ms per frame for 10 random hits because it decodes everything between the first and the last one.
+
+### one card, quiet machine (2026-09-12, before nest #138)
+
+| backend | file | blobs | p50 ms | p90 ms | p99 ms | mean ms |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| av1 all-intra crf50, one stream | 0.533 | 1 | 27.0 | 28.6 | 30.5 | 28.1 |
+| av1 all-intra crf35, one stream | 1.374 | 1 | 28.6 | 31.0 | 37.3 | 29.2 |
+| avif q48, one blob per card | 1.196 | 38627 | 70.0 | 83.3 | 102.2 | 72.0 |
+| jxl-transcode, one blob per card | 3.606 | 38627 | 36.5 | 54.3 | 100.6 | 40.3 |
+
+- the av1 stream is all-intra (keyint=1): a seek lands on the frame itself, there is no keyframe walk. the spawn floor below is most of its 27 ms.
+
+### one card under load (2026-09-13, wemm build running), before and after nest #138
+
+| backend | p50 before | p99 before | p50 after | p99 after | batched 10 hits, ms per frame | stream export once, ms |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| av1 all-intra crf50, one stream | 36.4 | 187.5 | 36.4 | 187.5 | 238.6 | 791.2 |
+| av1 all-intra crf35, one stream | 53.6 | 136.0 | 53.6 | 136.0 | 316.7 | 58314.4 |
+| avif q48, one blob per card | 93.7 | 182.0 | 32.0 | 69.3 | - | - |
+| jxl-transcode, one blob per card | 43.1 | 93.9 | 15.5 | 42.0 | - | - |
+
+- the av1 rows did not change in #138 (the fix there is that decode_frames_at raised before; it now returns). the batched column is the cost of resolving 10 random hits in one ffmpeg walk, divided by 10: it decodes every frame between the first and the last hit.
+- the 58 s export of the stills stream is the 1.3 GB blob going through a full swap; on the quiet machine it was 1.8 s.
+
+### process spawn floor (2026-09-13)
+
+| binary | p50 ms | mean ms | n |
+| --- | ---: | ---: | ---: |
+| ffmpeg | 22.7 | 24.1 | 50 |
+| avifdec | 6.3 | 7.6 | 50 |
+| djxl | 15.0 | 16.7 | 50 |
+
+- `<tool> --version`, no file touched: what every per-card read pays before a single byte is decoded.
+
+- a quiet-machine rerun of the after-#138 numbers is pending the end of the five-model build; the before/after pair above was taken under the same load, minutes apart.
+
+provenance: measured; source: benchmark/experiments/17-random-access/data/latency-2026-09-12.json (quiet machine, the scratch script that became measure_latency.py), latency-2026-09-13.json and latency-2026-09-13-fixed.json (benchmark/tools/measure_latency.py, before and after nest pr #138, while the five-model 38k build held the gpu and 15.5 of 16 GB of swap), spawn-floor-2026-09-13.json (50 spawns of each decoder binary with --version); date: 2026-09-13; notes: 200 item ordinals, numpy.random.default_rng(7).choice(38627, 200), the same ordinals for every file. every number is end to end through the forge read path as it exists: blob lookup in the mmap, a child process (ffmpeg, avifdec, djxl), the decode, and the array back in python. the av1 rows pay one export of the whole stream blob to a temp file first (export_once_ms), because ffmpeg needs a path; that is a one-time cost per open, not per card. apple m4, ffmpeg 9.0.1 with svt-av1, libavif 1.4.2 (dav1d 1.5.4), cjxl/djxl 0.12.0.
