@@ -16,13 +16,13 @@ issue: https://github.com/brennercruvinel/mtg-nest-benchmark/issues/2
 
 ## avif q48 as the stills backend
 
-quality matched, avif from libaom is 12.4% smaller than the svt-av1 all-intra stream on the sample and 13.0% smaller on the full `.nest`, with o(1) access per image and no video decode. the cost is on the build side: the clip embed over per-image avif ran 4 to 10x slower than over the mp4 (12.5 to 37 items/s against about 140). switching the stills profile means accepting that or fixing the decode path first.
+done on 2026-09-12, nest pull request #137: `profile = "stills"` now resolves to one avif per image (libaom q48, speed 8) and the old recipe stays as `stills-av1`. two things came out after the switch, both on 2026-09-13: the read path was paying libpng's deflate on every avif decode (experiment 17; nest #138 writes the intermediate uncompressed, 94 to 32 ms per card), and libaom writes different bytes with one worker than with two or more (experiment 18; nest #139 pins `-j 8` and records it, since avifenc's default tied the file_hash to the core count of the build machine). the stills release on the hub is still the av1 stream; a rebuild under the avif profile is the next release cut.
 
 issue: https://github.com/brennercruvinel/mtg-nest-benchmark/issues/3
 
 ## recalibrate the dual-gate floors, or extend the ladder below 30
 
-the default floors (ssim2 p10 85, min 72, drift 0.98) are unreachable for 488x680 yuv420 card scans at any crf of the ladder; the recorded ladder shows the drift floor failing already at crf30. the gate therefore always falls back to the smallest crf with a warning, which makes `crf=auto` a no-op on this corpus class. either the floors get calibrated per corpus class or the ladder extends below 30 so the gate can pass somewhere.
+done on 2026-09-12, nest pull request #137: the defaults moved to ssim2 p10 60, min 45, drift 0.95 and the ladder to 25..50, the values the 2048-card sample reaches (crf30 passes, crf35 fails on p10), so `crf = "auto"` picks a rung on this corpus class instead of falling back with a warning. what is still open is the gate model: every profile gates on clip, the model that reads the art and not the name, and the retrieval-auto profile should gate on siglip2 or wemm with a larger sample than the 48 stratified items. that needs the gpu and follows the five-model build.
 
 issue: https://github.com/brennercruvinel/mtg-nest-benchmark/issues/4
 
@@ -46,7 +46,7 @@ issue: https://github.com/brennercruvinel/mtg-nest-benchmark/issues/7
 
 ## research notes
 
-five things worth a spike, none started. a template frame per cluster, the av1 golden-frame mechanism, so a group of reprints predicts from one shared reference instead of a chain. binary hnsw traversal with int8 rescoring, a 32x reduction of the index band. a dedup cascade from phash to a cnn embedding (imagededup, fastdup), since byte dedup found 38 groups and near-duplicate detection is what corpus B needs. crf search by a metric target in the style of ab-av1, with hit@k as the target once the floor above exists. av2, whose 1.0 specification came out in may 2026 with about 30% over av1 and no practical encoder yet; the versioned codec field in the container covers the migration. and cool-chic as a neural codec spike, the one with a c decoder on cpu.
+three of the five measured on 2026-09-13, experiment 16. the phash prefilter is refuted on this corpus: the same-illustration pairs sit at a median hamming of 28 bits out of 64 because most of them are a framed printing next to a borderless one, the same art at another scale, which is also why grouping bought experiment 09 so little. the binary index with int8 rescoring holds: on siglip2 a hamming top-200 over 96-byte rows keeps 0.93 of the exact top-10 and top-800 keeps 0.97, the int8 ladder's own ceiling; the same measurement puts the int8 ladder itself at 0.92 recall@10 on clip, which is the int8 confound of the dataset card measured on image-to-image neighbours. the golden frame is a null result on groups of two. crf search by a metric target is experiment 19. av2 and cool-chic stay unmeasured: no encoder on this machine writes a stream the forge decodes.
 
 issue: https://github.com/brennercruvinel/mtg-nest-benchmark/issues/8
 
@@ -55,3 +55,15 @@ issue: https://github.com/brennercruvinel/mtg-nest-benchmark/issues/8
 three candidates sit in `candidates/` and should be promoted or discarded. making `tune=still` the schema default invalidates every embed cache keyed on the media recipe, so it needs a deliberate cut. the full-corpus manifest is 13 MB of `items[]` and provenance `minimal` would drop most of it; the release sidecars already strip `items[]` into `items.jsonl.gz`, the candidates do not.
 
 issue: https://github.com/brennercruvinel/mtg-nest-benchmark/issues/9
+
+## a reprint corpus that has reprints in it
+
+only one image per oracle_id is on disk (38,630 files). the printings table has 100,367 printings with an image_uri, 65,000 of them never downloaded, and the 2787 "reprints" on disk are mostly framed-versus-borderless pairs. the near-dup profile, the gop probe and the golden frame have nothing to measure until the other printings exist locally, about 7 GB from scryfall. that download is a decision for the owner, not a build step.
+
+issue: none yet
+
+## an in-process decoder for the read path
+
+experiment 17: 23 of the 27 ms a single card costs from the av1 stream is ffmpeg starting up, and the batched path walks every frame between the first and the last hit, so for hits spread over the corpus it loses to k single seeks by a factor of six. a dav1d binding (or pyav) in the forge read path removes the spawn and makes `decode_frames_at` choose between a walk and k seeks by the span. upstream work in nest, measured here.
+
+issue: none yet
