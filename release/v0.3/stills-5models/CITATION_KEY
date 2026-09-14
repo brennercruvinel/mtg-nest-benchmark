@@ -1,0 +1,7 @@
+content_hash = sha256:cb8fdf8f13fa50f93969de7603386f1c2b117a5e4946c60ac9894a3c5a1f062b
+file_hash = sha256:6b2bc21a2057bccea054fa331ee91c04f2b7ee80156f01144399c3065e7d4b3f
+chunker_version = mtgdataset/1
+title = MTG card dataset (self-contained)
+n_chunks = 38627
+built_with = nest 0.3.0
+read_with = nest inspect --json
