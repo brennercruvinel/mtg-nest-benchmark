@@ -1,0 +1,15 @@
+{
+ "n_art_series_labels": 2246,
+ "slice": 2000,
+ "seed": 7,
+ "siglip2": {
+  "plain_queries": 1893,
+  "hit1_full_gallery": 0.7871,
+  "hit1_gallery_without_art_series": 0.8811
+ },
+ "wemm-2b": {
+  "plain_queries": 1893,
+  "hit1_full_gallery": 0.8024,
+  "hit1_gallery_without_art_series": 0.8685
+ }
+}

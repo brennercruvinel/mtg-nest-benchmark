@@ -1,0 +1,293 @@
+{
+ "experiment": "20-full-corpus-utility",
+ "title": "text-to-image hit@k with every card as a query, four models on the 38627-card file",
+ "provenance": {
+  "status": "measured",
+  "source": "benchmark/experiments/20-full-corpus-utility/data/full.<preset>.json (benchmark/tools/bench_full_corpus.py over release/v0.3/stills-5models/mtgdataset.nest, file_hash 6b2bc21a); build timings from candidates/stills-5models/mtgdataset.manifest.json",
+  "date": "2026-09-14",
+  "notes": "one query per card, 'artwork of the card {name}' through each model's text tower, searched in that model's image space inside the file (int8 rows, the space the file serves); a hit is the card's own chunk_id in the top k. 38627 queries, so the standard error on hit@1 is 0.0015 to 0.0024 and the 95% interval is a 1000-draw bootstrap. the 512-card column is experiment 15's lossless row (200 queries, se 0.02 to 0.03). media is the stills recipe (av1 all-intra crf35 tune still), the same as the stills release. apple m4 mps fp16; the text embed rate is the bench's, the image rate is the forge's from the build manifest."
+ },
+ "tables": [
+  {
+   "title": "hit@k on 38627 queries (stills media, int8 spaces)",
+   "columns": [
+    {
+     "key": "model",
+     "label": "image space"
+    },
+    {
+     "key": "dim",
+     "label": "dim",
+     "fmt": "int"
+    },
+    {
+     "key": "hit1",
+     "label": "hit@1",
+     "fmt": "f3"
+    },
+    {
+     "key": "ci_lo",
+     "label": "ci95 low",
+     "fmt": "f3"
+    },
+    {
+     "key": "ci_hi",
+     "label": "ci95 high",
+     "fmt": "f3"
+    },
+    {
+     "key": "hit5",
+     "label": "hit@5",
+     "fmt": "f3"
+    },
+    {
+     "key": "hit10",
+     "label": "hit@10",
+     "fmt": "f3"
+    },
+    {
+     "key": "mrr",
+     "label": "mrr@10",
+     "fmt": "f3"
+    },
+    {
+     "key": "hit1_512",
+     "label": "hit@1 on 512 cards (exp 15)",
+     "fmt": "f3"
+    }
+   ],
+   "rows": [
+    {
+     "model": "siglip2",
+     "dim": null,
+     "hit1": 0.7499,
+     "ci_lo": 0.7452,
+     "ci_hi": 0.7546,
+     "hit5": 0.861,
+     "hit10": 0.8875,
+     "mrr": 0.7987,
+     "hit1_512": 0.93,
+     "text_q_per_s": 80.8,
+     "build_img_per_s": 52.85,
+     "embed_s": 730.877
+    },
+    {
+     "model": "wemm-2b@256",
+     "dim": 256,
+     "hit1": 0.7443,
+     "ci_lo": 0.7399,
+     "ci_hi": 0.7484,
+     "hit5": 0.8859,
+     "hit10": 0.9132,
+     "mrr": 0.8062,
+     "hit1_512": 0.91,
+     "text_q_per_s": 14.7,
+     "build_img_per_s": 1.02,
+     "embed_s": 75529.902
+    },
+    {
+     "model": "jina-v5-omni-nano@256",
+     "dim": 256,
+     "hit1": 0.3361,
+     "ci_lo": 0.3316,
+     "ci_hi": 0.341,
+     "hit5": 0.5138,
+     "hit10": 0.5816,
+     "mrr": 0.4124,
+     "hit1_512": 0.655,
+     "text_q_per_s": 265.9,
+     "build_img_per_s": 3.52,
+     "embed_s": 21960.337
+    },
+    {
+     "model": "clip-vit-b32",
+     "dim": null,
+     "hit1": 0.0977,
+     "ci_lo": 0.0946,
+     "ci_hi": 0.1006,
+     "hit5": 0.1635,
+     "hit10": 0.1926,
+     "mrr": 0.126,
+     "hit1_512": 0.23,
+     "text_q_per_s": 202.4,
+     "build_img_per_s": null,
+     "embed_s": 0.0
+    }
+   ],
+   "notes": [
+    "the 512-card numbers were the ceiling of what 200 queries could say; on the whole corpus every model that reads the name loses 0.17 to 0.32 of hit@1 against its sample number, and clip loses nothing because it had nothing to lose."
+   ]
+  },
+  {
+   "title": "what each model costs",
+   "columns": [
+    {
+     "key": "model",
+     "label": "image space"
+    },
+    {
+     "key": "build_img_per_s",
+     "label": "build, images per s",
+     "fmt": "f2"
+    },
+    {
+     "key": "embed_s",
+     "label": "build embed, s",
+     "fmt": "f0"
+    },
+    {
+     "key": "text_q_per_s",
+     "label": "bench, text queries per s",
+     "fmt": "f1"
+    }
+   ],
+   "rows": [
+    {
+     "model": "siglip2",
+     "dim": null,
+     "hit1": 0.7499,
+     "ci_lo": 0.7452,
+     "ci_hi": 0.7546,
+     "hit5": 0.861,
+     "hit10": 0.8875,
+     "mrr": 0.7987,
+     "hit1_512": 0.93,
+     "text_q_per_s": 80.8,
+     "build_img_per_s": 52.85,
+     "embed_s": 730.877
+    },
+    {
+     "model": "wemm-2b@256",
+     "dim": 256,
+     "hit1": 0.7443,
+     "ci_lo": 0.7399,
+     "ci_hi": 0.7484,
+     "hit5": 0.8859,
+     "hit10": 0.9132,
+     "mrr": 0.8062,
+     "hit1_512": 0.91,
+     "text_q_per_s": 14.7,
+     "build_img_per_s": 1.02,
+     "embed_s": 75529.902
+    },
+    {
+     "model": "jina-v5-omni-nano@256",
+     "dim": 256,
+     "hit1": 0.3361,
+     "ci_lo": 0.3316,
+     "ci_hi": 0.341,
+     "hit5": 0.5138,
+     "hit10": 0.5816,
+     "mrr": 0.4124,
+     "hit1_512": 0.655,
+     "text_q_per_s": 265.9,
+     "build_img_per_s": 3.52,
+     "embed_s": 21960.337
+    },
+    {
+     "model": "clip-vit-b32",
+     "dim": null,
+     "hit1": 0.0977,
+     "ci_lo": 0.0946,
+     "ci_hi": 0.1006,
+     "hit5": 0.1635,
+     "hit10": 0.1926,
+     "mrr": 0.126,
+     "hit1_512": 0.23,
+     "text_q_per_s": 202.4,
+     "build_img_per_s": null,
+     "embed_s": 0.0
+    }
+   ],
+   "notes": [
+    "clip and potion came out of the shared embed cache at build time, so the manifest carries no rate for them; the clip image rate measured in experiment 15 was 36 to 49 per s. wemm-2b at 1.02 images per s is 21 hours for the corpus; jina at 3.5 is 6 hours; siglip2 at 53 is 12 minutes."
+   ]
+  },
+  {
+   "title": "where the siglip2 misses go (2000-card slice, default_rng(7))",
+   "columns": [
+    {
+     "key": "what",
+     "label": "top-1 result"
+    },
+    {
+     "key": "n",
+     "label": "queries",
+     "fmt": "int"
+    },
+    {
+     "key": "share",
+     "label": "share of the slice",
+     "fmt": "f3"
+    }
+   ],
+   "rows": [
+    {
+     "what": "the card itself (hit)",
+     "n": 1493,
+     "share": 0.7465
+    },
+    {
+     "what": "a card with the same name",
+     "n": 11,
+     "share": 0.0055
+    },
+    {
+     "what": "a card whose name shares a word",
+     "n": 158,
+     "share": 0.079
+    },
+    {
+     "what": "an unrelated name",
+     "n": 338,
+     "share": 0.169
+    }
+   ],
+   "notes": [
+    "of the 507 misses, 307 (61%) land on a row whose label has the form 'name // name'. those are 2246 rows of the corpus (5.8%): full-art cards with no frame and no printed name (the art series). they are 8% of the gallery and take 61% of the misses.",
+    "when the query card is itself one of those, siglip2 finds it 37 times in 159 (0.23); on the other cards 1456 in 1841 (0.79)."
+   ]
+  },
+  {
+   "title": "hit@1 on plain-name queries, with and without the art-series rows in the gallery (same slice)",
+   "columns": [
+    {
+     "key": "model",
+     "label": "image space"
+    },
+    {
+     "key": "plain_queries",
+     "label": "queries",
+     "fmt": "int"
+    },
+    {
+     "key": "hit1_full",
+     "label": "hit@1, full gallery",
+     "fmt": "f3"
+    },
+    {
+     "key": "hit1_filtered",
+     "label": "hit@1, art series removed from the gallery",
+     "fmt": "f3"
+    }
+   ],
+   "rows": [
+    {
+     "model": "siglip2",
+     "plain_queries": 1893,
+     "hit1_full": 0.7871,
+     "hit1_filtered": 0.8811
+    },
+    {
+     "model": "wemm-2b@256",
+     "plain_queries": 1893,
+     "hit1_full": 0.8024,
+     "hit1_filtered": 0.8685
+    }
+   ],
+   "notes": [
+    "the filtered column drops 'name // name' rows from the top-20 before taking the first; it is what a corpus without the art series would score. the art-series queries themselves are excluded from both columns."
+   ]
+  }
+ ]
+}
