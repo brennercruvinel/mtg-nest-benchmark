@@ -6,6 +6,7 @@ the format follows keep a changelog. versions are those of the `.nest` releases 
 
 ### added, 2026-09-14 and 15
 
+- `data/cards-*.parquet` on the hub (4.0 GB, 8 shards): the corpus as one row per card with the scan as an image column, the text fields, an `art_series` flag and the ordinal that maps to every release; the hub viewer renders it. tool `benchmark/tools/export_parquet.py`, written from the release's `items.jsonl.gz`.
 - `release/v0.3/stills-5models/`: the 38,627-card build with potion, clip, siglip2, jina-v5-omni-nano@256 and wemm-2b@256, the first full-corpus file with the models that read the printed name. stills media, file_hash `6b2bc21a`, 1.44 GB, on the hub. built in 35 hours on an m4 (21 of them wemm-2b at 1.0 image per second).
 - experiment 20: hit@k with every card as a query on that file. siglip2 0.750, wemm-2b 0.744, jina 0.336, clip 0.098 at rank 1 (intervals of 0.005). the 512-card numbers were 0.93 and 0.91; 2,246 art-series rows (full art, no printed name, `name // name` labels) take 61% of the misses, and with them out of the gallery plain queries score 0.88 and 0.87. tool `bench_full_corpus.py`.
 - the hub card rewritten around the five-model file: file_hash as the identifier, the hit@k table in front, the clip ladder second, the findings of experiments 16 to 19 in the limits.
