@@ -1,0 +1,279 @@
+{
+ "corpus_input_hash": "sha256:5639a3b761d9a82388d4e2e47572ba3d25038997b3cdd4522ad82b5c01b59a74",
+ "items": {
+  "fields": [
+   "image_path",
+   "key",
+   "label",
+   "media_uri",
+   "ordinal"
+  ],
+  "n": 38627,
+  "stripped_to": "items.jsonl.gz"
+ },
+ "manifest_schema_version": 1,
+ "media": {
+  "backend": "av1",
+  "canvas": [
+   488,
+   680
+  ],
+  "codec": "libsvtav1",
+  "compression_ratio": 2.98,
+  "crf": 35,
+  "dedup": {
+   "n_items": 38627,
+   "n_unique_frames": 38627
+  },
+  "embedded": true,
+  "fps": 1,
+  "frame_count": 38627,
+  "gop": {
+   "decision": "intra",
+   "policy": "flag"
+  },
+  "keyint": 1,
+  "media_sha256": "sha256:ed5a999e690f03996899e4905ead6944fa3425e435959223b87438fb83d7a4d5",
+  "output_bytes": 1335047579,
+  "pix_fmt": "yuv420p",
+  "preset": 6,
+  "provenance_sha256": "sha256:d1e65101209300f6b73bca918563d1e405b559a749b89353b058abc5ee1421de",
+  "segments": [
+   {
+    "media_sha256": "sha256:ed5a999e690f03996899e4905ead6944fa3425e435959223b87438fb83d7a4d5",
+    "n_frames": 38627,
+    "output_bytes": 1335047579,
+    "start_frame": 0,
+    "uri": "mtgdataset-av1.mp4"
+   }
+  ],
+  "source_bytes": 3975063106,
+  "toolchain": {
+   "encoder": "libsvtav1",
+   "ffmpeg": "ffmpeg version 9.0.1 Copyright (c) 2000-2026 the FFmpeg developers",
+   "params": {
+    "crf": 35,
+    "fps": 1,
+    "keyint": 1,
+    "lp": 2,
+    "pix_fmt": "yuv420p",
+    "preset": 6,
+    "tune": "still",
+    "tune_resolved": 3
+   }
+  },
+  "tune": "still"
+ },
+ "models": {
+  "clip-vit-b32": {
+   "embedding_recipe_hash": "sha256:5deac1a6a7d45054639b72a18d21d076033ec812a5d847b2bb507f57a79e93ea",
+   "model_hash": "sha256:76269ff6bb18be70a910506ccd31d52216b05a4bede0772ac17c0100ee75ca8f",
+   "recipe": {
+    "adapter_version": 1,
+    "decoder": {
+     "backend": "av1",
+     "canvas": [
+      488,
+      680
+     ],
+     "crf": 35,
+     "pix_fmt": "yuv420p",
+     "provenance_sha256": "sha256:d1e65101209300f6b73bca918563d1e405b559a749b89353b058abc5ee1421de"
+    },
+    "device_class": "auto",
+    "encode_kwargs": {},
+    "image_doc_format": "dict",
+    "image_input_mode": "decoded_media",
+    "image_max_side": 0,
+    "image_mode": "image_document",
+    "image_prompt": "Represent this image.",
+    "model_dtype": "",
+    "normalize": true,
+    "preprocess_version": "processor-native-v1",
+    "preset": "clip-vit-b32",
+    "text_corpus_mode": "plain",
+    "text_query_mode": "plain"
+   }
+  },
+  "jina-v5-omni-nano": {
+   "embedding_recipe_hash": "sha256:37ee6917463ad9f014c506111bfcc58a2e929d0e43b60d3354f3fb79164c140b",
+   "items_per_s": 3.52,
+   "model_hash": "sha256:59a01c7cfdafae618aec41dd815854d2714950d92b1aa8f8dae03628e9dfbf67",
+   "recipe": {
+    "adapter_version": 1,
+    "decoder": {
+     "backend": "av1",
+     "canvas": [
+      488,
+      680
+     ],
+     "crf": 35,
+     "pix_fmt": "yuv420p",
+     "provenance_sha256": "sha256:d1e65101209300f6b73bca918563d1e405b559a749b89353b058abc5ee1421de"
+    },
+    "device_class": "auto",
+    "encode_kwargs": {},
+    "image_doc_format": "bare",
+    "image_input_mode": "decoded_media",
+    "image_max_side": 0,
+    "image_mode": "image_document",
+    "image_prompt": "Represent this image.",
+    "model_dtype": "",
+    "normalize": true,
+    "preprocess_version": "processor-native-v1",
+    "preset": "jina-v5-omni-nano",
+    "text_corpus_mode": "document",
+    "text_query_mode": "query"
+   }
+  },
+  "potion": {
+   "embedding_recipe_hash": "sha256:b081e0ecc2c051f89e20eea9efe6071f094a5b943b71a364db2a8206ac042dbb",
+   "model_hash": "sha256:8f2eb91a754b4da59cdd8223d0ba196185fed1bb6f092fd2be0ff02b893b1c98",
+   "recipe": {
+    "adapter_version": 1,
+    "device_class": "auto",
+    "encode_kwargs": {},
+    "image_doc_format": "dict",
+    "image_input_mode": "decoded_media",
+    "image_max_side": 0,
+    "image_mode": "image_document",
+    "image_prompt": "Represent this image.",
+    "model_dtype": "",
+    "normalize": true,
+    "preprocess_version": "processor-native-v1",
+    "preset": "potion",
+    "text_corpus_mode": "plain",
+    "text_query_mode": "plain"
+   }
+  },
+  "siglip2": {
+   "embedding_recipe_hash": "sha256:2dd43908e146ea3ce71b659af8493199d2737d106f0dfc3400137cf7482e4048",
+   "items_per_s": 52.85,
+   "model_hash": "sha256:a9946db1d33627e773569c415ab202cd759befcdc047ac0d8768937298775f3c",
+   "recipe": {
+    "adapter_version": 1,
+    "decoder": {
+     "backend": "av1",
+     "canvas": [
+      488,
+      680
+     ],
+     "crf": 35,
+     "pix_fmt": "yuv420p",
+     "provenance_sha256": "sha256:d1e65101209300f6b73bca918563d1e405b559a749b89353b058abc5ee1421de"
+    },
+    "device_class": "auto",
+    "encode_kwargs": {},
+    "image_doc_format": "dict",
+    "image_input_mode": "decoded_media",
+    "image_max_side": 0,
+    "image_mode": "image_document",
+    "image_prompt": "Represent this image.",
+    "model_dtype": "",
+    "normalize": true,
+    "preprocess_version": "processor-native-v1",
+    "preset": "siglip2",
+    "text_corpus_mode": "plain",
+    "text_query_mode": "plain"
+   }
+  },
+  "wemm-2b": {
+   "embedding_recipe_hash": "sha256:6f70f3471ba38c63223e308e6fe8695c927ca1b51648f41f33aaa4a2bcfd4196",
+   "items_per_s": 1.02,
+   "model_hash": "sha256:6b428bc1759f60c791c93ae71874872ee208b756d5ce4f1ee65ce005e2b6efe6",
+   "recipe": {
+    "adapter_version": 1,
+    "decoder": {
+     "backend": "av1",
+     "canvas": [
+      488,
+      680
+     ],
+     "crf": 35,
+     "pix_fmt": "yuv420p",
+     "provenance_sha256": "sha256:d1e65101209300f6b73bca918563d1e405b559a749b89353b058abc5ee1421de"
+    },
+    "device_class": "auto",
+    "encode_kwargs": {},
+    "image_doc_format": "dict",
+    "image_input_mode": "decoded_media",
+    "image_max_side": 768,
+    "image_mode": "image_document",
+    "image_prompt": "Represent this image.",
+    "model_dtype": "",
+    "normalize": true,
+    "preprocess_version": "processor-native-v1",
+    "preset": "wemm-2b",
+    "text_corpus_mode": "document",
+    "text_query_mode": "query"
+   }
+  }
+ },
+ "n_items": 38627,
+ "n_unique_frames": 38627,
+ "name": "mtgdataset",
+ "outputs": {
+  "mtgdataset.nest": {
+   "build_s": 117.256,
+   "bytes": 1444424636,
+   "file": "candidates/stills-5models/mtgdataset.nest",
+   "file_hash": "sha256:6b2bc21a2057bccea054fa331ee91c04f2b7ee80156f01144399c3065e7d4b3f"
+  }
+ },
+ "provenance_mode": "standard",
+ "spaces": [
+  {
+   "dim": null,
+   "modality": "image",
+   "name": "clip-vit-b32",
+   "preset": "clip-vit-b32",
+   "space_dtype": "int8"
+  },
+  {
+   "dim": null,
+   "modality": "image",
+   "name": "siglip2",
+   "preset": "siglip2",
+   "space_dtype": "int8"
+  },
+  {
+   "dim": 256,
+   "modality": "image",
+   "name": "jina-v5-omni-nano@256",
+   "preset": "jina-v5-omni-nano",
+   "space_dtype": "int8"
+  },
+  {
+   "dim": 256,
+   "modality": "text",
+   "name": "jina-v5-omni-nano-text@256",
+   "preset": "jina-v5-omni-nano",
+   "space_dtype": "int8"
+  },
+  {
+   "dim": 256,
+   "modality": "image",
+   "name": "wemm-2b@256",
+   "preset": "wemm-2b",
+   "space_dtype": "int8"
+  },
+  {
+   "dim": 256,
+   "modality": "text",
+   "name": "wemm-2b-text@256",
+   "preset": "wemm-2b",
+   "space_dtype": "int8"
+  }
+ ],
+ "sql": "",
+ "text_quality": "template",
+ "timings": {
+  "embed.clip-vit-b32": 0.0,
+  "embed.jina-v5-omni-nano": 21960.337,
+  "embed.potion": 0.0,
+  "embed.siglip2": 730.877,
+  "embed.wemm-2b": 75529.902,
+  "media": 26337.116,
+  "rows": 10.003
+ }
+}
