@@ -615,3 +615,54 @@ verdict: half refuted. the still tune holds and then some: svt's default tune ne
 | avif-s8 | 90 | 88.42 |
 
 provenance: measured; source: benchmark/experiments/19-matched-quality/data/target-61.96-2026-09-13.json (benchmark/tools/crf_for_target.py --target 61.96), avif-s8-q48-2026-09-13.json (the production avif recipe on the same sample); experiment 11's battery.json for the 2026-08-31 rows; date: 2026-09-13; notes: quality = mean ssimulacra2 over frames-96 (the 96 ordinals of sample-2048 that measure_variants.py draws with default_rng(7)), decoded frame against the letterboxed source png, the forge's own encoders and letterbox (488x680, yuv420). bytes = the full sample-2048 encoded at the two knobs that bracket the target, and linear interpolation between them at the target. the target 61.96 is experiment 11's calibration point. apple m4, ffmpeg 9.0.1 with svt-av1 4.2.0, libavif 1.4.2 with aom 3.15.0 (experiment 11 ran aom 3.14.1). encode seconds were taken while the five-model build held the gpu and are not a speed measurement.
+
+## 20 full-corpus-utility: text-to-image hit@k with every card as a query, four models on the 38627-card file
+
+hypothesis: the text-to-image numbers of experiment 15 hold on the whole corpus: siglip2 and wemm-2b find the card by name at about 0.9 hit@1 with the full 38,627-card gallery in the way, jina at about 0.65, clip at about 0.23; and with 38,627 queries the interval shrinks enough to rank the two leaders.
+method: the release stills-5models (av1 all-intra crf35 tune still, the stills media, with potion, clip, siglip2, jina-v5-omni-nano@256 and wemm-2b@256 inside), benchmark/tools/bench_full_corpus.py per preset: one query per card, "artwork of the card {name}" through the model's text tower, searched in that model's int8 image space in the file, a hit when the card's own chunk_id is in the top k; hit@1, 5, 10 with the binomial standard error and a 1000-draw bootstrap interval; then, for siglip2 on a 2000-card slice, each top-1 miss classified by the label it landed on, and hit@1 recomputed with the "name // name" rows filtered out of the gallery, for siglip2 and wemm.
+verdict: refuted on the level, confirmed on the order. siglip2 0.750 and wemm-2b 0.744 hit@1 (intervals 0.745 to 0.755 and 0.740 to 0.748), jina 0.336, clip 0.098; hit@10 is 0.888, 0.913, 0.582, 0.193. the 512-card numbers were 0.93 and 0.91. most of the drop has one cause: 2,246 rows of the corpus, 5.8%, are art-series cards, full art with no frame and no printed name, labeled "name // name" in the source; they take 61% of siglip2's top-1 misses while being 8% of the gallery, and when the query card is one of them siglip2 finds it 23% of the time. with those rows out of the gallery, plain-name queries go from 0.787 to 0.881 (siglip2) and 0.802 to 0.869 (wemm) on the same slice. the rest of the gap is what a gallery seventy times larger costs: names that share a word, reprints with a second face, tokens named "Elemental" and "Spirit".
+
+### hit@k on 38627 queries (stills media, int8 spaces)
+
+| image space | dim | hit@1 | ci95 low | ci95 high | hit@5 | hit@10 | mrr@10 | hit@1 on 512 cards (exp 15) |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| siglip2 | - | 0.750 | 0.745 | 0.755 | 0.861 | 0.887 | 0.799 | 0.930 |
+| wemm-2b@256 | 256 | 0.744 | 0.740 | 0.748 | 0.886 | 0.913 | 0.806 | 0.910 |
+| jina-v5-omni-nano@256 | 256 | 0.336 | 0.332 | 0.341 | 0.514 | 0.582 | 0.412 | 0.655 |
+| clip-vit-b32 | - | 0.098 | 0.095 | 0.101 | 0.164 | 0.193 | 0.126 | 0.230 |
+
+- the 512-card numbers were the ceiling of what 200 queries could say; on the whole corpus every model that reads the name loses 0.17 to 0.32 of hit@1 against its sample number, and clip loses nothing because it had nothing to lose.
+
+### what each model costs
+
+| image space | build, images per s | build embed, s | bench, text queries per s |
+| --- | ---: | ---: | ---: |
+| siglip2 | 52.85 | 731 | 80.8 |
+| wemm-2b@256 | 1.02 | 75530 | 14.7 |
+| jina-v5-omni-nano@256 | 3.52 | 21960 | 265.9 |
+| clip-vit-b32 | - | 0 | 202.4 |
+
+- clip and potion came out of the shared embed cache at build time, so the manifest carries no rate for them; the clip image rate measured in experiment 15 was 36 to 49 per s. wemm-2b at 1.02 images per s is 21 hours for the corpus; jina at 3.5 is 6 hours; siglip2 at 53 is 12 minutes.
+
+### where the siglip2 misses go (2000-card slice, default_rng(7))
+
+| top-1 result | queries | share of the slice |
+| --- | ---: | ---: |
+| the card itself (hit) | 1493 | 0.747 |
+| a card with the same name | 11 | 0.005 |
+| a card whose name shares a word | 158 | 0.079 |
+| an unrelated name | 338 | 0.169 |
+
+- of the 507 misses, 307 (61%) land on a row whose label has the form 'name // name'. those are 2246 rows of the corpus (5.8%): full-art cards with no frame and no printed name (the art series). they are 8% of the gallery and take 61% of the misses.
+- when the query card is itself one of those, siglip2 finds it 37 times in 159 (0.23); on the other cards 1456 in 1841 (0.79).
+
+### hit@1 on plain-name queries, with and without the art-series rows in the gallery (same slice)
+
+| image space | queries | hit@1, full gallery | hit@1, art series removed from the gallery |
+| --- | ---: | ---: | ---: |
+| siglip2 | 1893 | 0.787 | 0.881 |
+| wemm-2b@256 | 1893 | 0.802 | 0.869 |
+
+- the filtered column drops 'name // name' rows from the top-20 before taking the first; it is what a corpus without the art series would score. the art-series queries themselves are excluded from both columns.
+
+provenance: measured; source: benchmark/experiments/20-full-corpus-utility/data/full.<preset>.json (benchmark/tools/bench_full_corpus.py over release/v0.3/stills-5models/mtgdataset.nest, file_hash 6b2bc21a); build timings from candidates/stills-5models/mtgdataset.manifest.json; date: 2026-09-14; notes: one query per card, 'artwork of the card {name}' through each model's text tower, searched in that model's image space inside the file (int8 rows, the space the file serves); a hit is the card's own chunk_id in the top k. 38627 queries, so the standard error on hit@1 is 0.0015 to 0.0024 and the 95% interval is a 1000-draw bootstrap. the 512-card column is experiment 15's lossless row (200 queries, se 0.02 to 0.03). media is the stills recipe (av1 all-intra crf35 tune still), the same as the stills release. apple m4 mps fp16; the text embed rate is the bench's, the image rate is the forge's from the build manifest.

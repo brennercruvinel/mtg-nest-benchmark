@@ -1,0 +1,12 @@
+{
+ "misses": 507,
+ "miss_top1_is_dfc": 307,
+ "dfc_query_hits": [
+  37,
+  159
+ ],
+ "plain_query_hits": [
+  1456,
+  1841
+ ]
+}

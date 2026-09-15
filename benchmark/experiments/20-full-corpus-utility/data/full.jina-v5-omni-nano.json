@@ -1,0 +1,42 @@
+{
+ "index": "candidates/stills-5models/mtgdataset.nest",
+ "preset": "jina-v5-omni-nano",
+ "template": "artwork of the card {label}",
+ "queries": 38627,
+ "text_embed_s": 145.2,
+ "text_queries_per_s": 265.9,
+ "spaces": {
+  "jina-v5-omni-nano@256": {
+   "dim": 256,
+   "search_s": 156.5,
+   "hit": {
+    "@1": {
+     "value": 0.3361,
+     "se": 0.0024,
+     "ci95": [
+      0.3316,
+      0.341
+     ]
+    },
+    "@5": {
+     "value": 0.5138,
+     "se": 0.0025,
+     "ci95": [
+      0.509,
+      0.5189
+     ]
+    },
+    "@10": {
+     "value": 0.5816,
+     "se": 0.0025,
+     "ci95": [
+      0.5764,
+      0.5864
+     ]
+    }
+   },
+   "band_bytes": null,
+   "mrr_at_max_k": 0.4124
+  }
+ }
+}

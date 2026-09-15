@@ -1,0 +1,42 @@
+{
+ "index": "candidates/stills-5models/mtgdataset.nest",
+ "preset": "wemm-2b",
+ "template": "artwork of the card {label}",
+ "queries": 38627,
+ "text_embed_s": 2623.2,
+ "text_queries_per_s": 14.7,
+ "spaces": {
+  "wemm-2b@256": {
+   "dim": 256,
+   "search_s": 155.7,
+   "hit": {
+    "@1": {
+     "value": 0.7443,
+     "se": 0.0022,
+     "ci95": [
+      0.7399,
+      0.7484
+     ]
+    },
+    "@5": {
+     "value": 0.8859,
+     "se": 0.0016,
+     "ci95": [
+      0.8827,
+      0.889
+     ]
+    },
+    "@10": {
+     "value": 0.9132,
+     "se": 0.0014,
+     "ci95": [
+      0.9104,
+      0.9161
+     ]
+    }
+   },
+   "band_bytes": null,
+   "mrr_at_max_k": 0.8062
+  }
+ }
+}

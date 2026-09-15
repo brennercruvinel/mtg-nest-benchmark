@@ -1,0 +1,60 @@
+{
+ "n": 2000,
+ "seed": 7,
+ "classes": {
+  "hit": 1493,
+  "same_name": 11,
+  "shares_word": 158,
+  "other": 338
+ },
+ "examples": [
+  [
+   "Drover of the Mighty",
+   "Oko, the Ringleader // Oko, the Ringleader"
+  ],
+  [
+   "Break the Ice",
+   "Icehide Troll // Icehide Troll"
+  ],
+  [
+   "Icehide Troll",
+   "Icehide Troll // Icehide Troll"
+  ],
+  [
+   "Dread Fugue // Dread Fugue",
+   "Dread Fugue"
+  ],
+  [
+   "Planewide Disaster",
+   "Planequake"
+  ],
+  [
+   "Mosstodon",
+   "Axebane Ferox // Axebane Ferox"
+  ],
+  [
+   "Saw in Half",
+   "Smoke Spirits' Aid // Smoke Spirits' Aid"
+  ],
+  [
+   "Old-Growth Dryads",
+   "Trostani, Three Whispers // Trostani, Three Whispers"
+  ],
+  [
+   "Bound in Gold",
+   "Chainer, Dementia Master // Chainer, Dementia Master"
+  ],
+  [
+   "Ondu Rising",
+   "Invoke Despair // Invoke Despair"
+  ],
+  [
+   "End of the Hunt",
+   "Thalia and The Gitrog Monster // Thalia and The Gitrog Monster"
+  ],
+  [
+   "Chaos Dragon",
+   "Atraxa's Skitterfang // Atraxa's Skitterfang"
+  ]
+ ]
+}
