@@ -40,7 +40,7 @@ issue: https://github.com/brennercruvinel/mtg-nest-benchmark/issues/6
 
 ## the five-model full build and the model pins
 
-the 38,627-card build with all five models (potion, clip, siglip2, jina, wemm-2b) was never run; wemm-2b alone was estimated at 18 to 20 hours on the benchmark machine. wemm-4b and wemm-9b are registered in the model registry and were never executed. the remote-code allowlist still needs pinned revisions, and jina's `image_max_side` default needs a decision, since it was set by hand during the 1500 build to keep the embed at 0.5 s per image instead of 23 s.
+done on 2026-09-14: `release/v0.3/stills-5models`, 35 hours on an m4, and experiment 20 measured it with every card as a query (siglip2 0.750, wemm-2b 0.744 at rank 1). what stays open from this item: the gate still measures with clip, and the utility floor of nest #135 should run with siglip2 on this file; the art-series rows (2,246 cards with no printed name) should be a corpus list of their own so a name-retrieval number can be reported with and without them; wemm-4b and wemm-9b stay unpinned and unmeasured.
 
 issue: https://github.com/brennercruvinel/mtg-nest-benchmark/issues/7
 

@@ -1,6 +1,6 @@
 # hypotheses and verdicts
 
-every hypothesis the benchmark tested between 2026-08-31 and 2026-09-13, where it came from, how it was tested, and what the data said. the experiment id points at the directory under `benchmark/experiments/` whose `results.json` carries the numbers; "transcribed" means the artifacts are gone and the verdict rests on the 2026-09-03 report.
+every hypothesis the benchmark tested between 2026-08-31 and 2026-09-15, where it came from, how it was tested, and what the data said. the experiment id points at the directory under `benchmark/experiments/` whose `results.json` carries the numbers; "transcribed" means the artifacts are gone and the verdict rests on the 2026-09-03 report.
 
 | # | hypothesis | origin | how tested | verdict | experiment |
 | ---: | --- | --- | --- | --- | --- |
@@ -24,5 +24,6 @@ every hypothesis the benchmark tested between 2026-08-31 and 2026-09-13, where i
 | 18 | a 1-bit index with int8 rescoring keeps the int8 ladder's recall at an eighth of the bytes | roadmap note | 38627 image vectors, 1000 queries, recall@10 vs exact f32 | confirmed with a cost: siglip2 top-200 keeps 0.93, top-800 0.97; the int8 ladder itself is at 0.92 on clip | 16 |
 | 19 | the most central member first gives the inter encoder a better reference | roadmap note | reprints-2787, three orders, inter recipe | refuted on groups of two: 0.01% against arbitrary order | 16 |
 | 20 | at matched ssimulacra2 avif from libaom is 12 to 13% smaller than the av1 still stream | 12, carried into nest #137 | crf_for_target.py, four recipes bisected to ssim2 61.96 on frames-96, bytes on sample-2048 | refuted as stated: speed 6 is 5.0% smaller, speed 8 (the #137 profile) is 1.1% larger; the 13% compared files 4.6 points apart. the still tune is worth 21.6% against svt's default | 19 |
+| 21 | the 512-card text-to-image numbers hold on the whole corpus (siglip2 and wemm at about 0.9) | 14, 15 | every card as a query on the five-model 38,627-card file | refuted on the level: 0.750 and 0.744; 2,246 art-series rows with no printed name take 61% of the misses, and without them in the gallery plain queries score 0.88 | 20 |
 
 two notes on reading the table. hypothesis 4 is confirmed on bytes and the quality cost of that confirmation is what refutes hypothesis 5 on unique cards; the two are the same lever seen from two corpora. hypothesis 11 is the one that changed the product contract: the drift floor stays as a stability gate, and a retrieval-only profile needs a utility floor that does not exist yet (see `docs/roadmap.md`).
